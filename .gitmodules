@@ -1,0 +1,6 @@
+[submodule "Assets/xNode"]
+	path = Assets/xNode
+	url = https://github.com/siccity/xNode.git
+[submodule "Assets/YarnSpinner"]
+	path = Assets/YarnSpinner
+	url = https://github.com/YarnSpinnerTool/YarnSpinner.git
