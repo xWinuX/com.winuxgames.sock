@@ -1,3 +1,4 @@
+using System.Text;
 using UnityEngine;
 
 namespace SocksTool.Runtime.NodeSystem.Nodes
@@ -21,5 +22,20 @@ namespace SocksTool.Runtime.NodeSystem.Nodes
         public string Character { get => _character; set => _character = value; }
         
         public string Text { get => _text; set => _text = value; }
+
+        public override string GetText()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            if (_character != string.Empty)
+            {
+                sb.Append(Character);
+                sb.Append(": ");
+            }
+
+            sb.Append(_text);
+
+            return sb.ToString();
+        }
     }
 }

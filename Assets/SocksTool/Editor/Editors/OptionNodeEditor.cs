@@ -42,5 +42,7 @@ namespace SocksTool.Editor.Editors
                 NodeEditorGUILayout.PortField(position, port);
             };
         }
+
+        public override Color GetTint() => NodeColor.OptionNodeColor;
     }
 }

@@ -21,7 +21,7 @@ namespace SocksTool.Editor.Editors
             serializedObject.ApplyModifiedProperties();
         }
 
-        protected virtual void DrawNode() { }
+        protected virtual void DrawNode() { DrawInputNodePort(); }
 
         protected void DrawInputNodePort() { NodeEditorGUILayout.PortField(new GUIContent(""), TargetNode.GetInputPort(DialogueNode.InputFieldName), GUILayout.MaxWidth(0)); }
     }

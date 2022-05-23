@@ -17,5 +17,7 @@ namespace SocksTool.Editor.Editors
 
             NodeEditorGUILayout.PropertyField(serializedObject.FindProperty("_text"), GUIContent.none);
         }
+
+        public override Color GetTint() => NodeColor.LineNodeColor;
     }
 }

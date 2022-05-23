@@ -14,5 +14,7 @@ namespace SocksTool.Runtime.NodeSystem.Nodes
         public LineNode In => _in;
 
         public override object GetValue(NodePort port) => _in;
+
+        public virtual string GetText() => string.Empty;
     }
 }

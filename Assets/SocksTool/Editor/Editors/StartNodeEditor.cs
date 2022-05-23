@@ -6,7 +6,7 @@ using XNodeEditor;
 namespace SocksTool.Editor.Editors
 {
     [CustomNodeEditor(typeof(StartNode))]
-    public class NodeStartEditor : DialogueNodeEditor<StartNode>
+    public class StartNodeEditor : DialogueNodeEditor<StartNode>
     {
         protected override void DrawNode()
         {
@@ -17,6 +17,6 @@ namespace SocksTool.Editor.Editors
             EditorGUILayout.EndHorizontal();
         }
 
-        public override Color GetTint() => new Color(0.84f, 0.68f, 0.2f);
+        public override Color GetTint() => NodeColor.StartNodeColor;
     }
 }
