@@ -5,24 +5,17 @@ using XNodeEditor;
 namespace SocksTool.Editor.Editors
 {
     [CustomNodeEditor(typeof(LineNode))]
-    public class LineNodeEditor : NodeEditor
+    public class LineNodeEditor : DialogueNodeEditor<LineNode>
     {
-        private LineNode _lineNode;
-        
-        public override void OnBodyGUI()
+        protected override void DrawNode()
         {
-            if (_lineNode == null) { _lineNode = target as LineNode; }
-
-            serializedObject.Update();
-
             GUILayout.BeginHorizontal();
-            NodeEditorGUILayout.PortField(new GUIContent(""), _lineNode!.GetInputPort("_in"), GUILayout.MinWidth(0));
-            NodeEditorGUILayout.PortField(new GUIContent(""), _lineNode!.GetOutputPort("_out"), GUILayout.MinWidth(0));
-            GUILayout.EndHorizontal();
+            DrawInputNodePort();
             NodeEditorGUILayout.PropertyField(serializedObject.FindProperty("_character"));
-            NodeEditorGUILayout.PropertyField(serializedObject.FindProperty("_text"), GUIContent.none);
+            NodeEditorGUILayout.PortField(new GUIContent(""), TargetNode.GetOutputPort(LineNode.OutputFieldName), GUILayout.MaxWidth(0));
+            GUILayout.EndHorizontal();
 
-            serializedObject.ApplyModifiedProperties();
+            NodeEditorGUILayout.PropertyField(serializedObject.FindProperty("_text"), GUIContent.none);
         }
     }
 }

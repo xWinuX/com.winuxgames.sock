@@ -21,5 +21,17 @@ namespace SocksTool.Runtime.Utility
 
         public static string GetPropertyStringValue(IReadOnlyDictionary<string, MarkupValue> property, string key, string defaultValue = "") =>
             !property.TryGetValue(key, out MarkupValue markupValue) ? defaultValue : markupValue.StringValue;
+
+        public static string GetOperandStringValue(IEnumerable<Operand> operands)
+        {
+            foreach (Operand operand in operands)
+            {
+                if (operand.ValueCase != Operand.ValueOneofCase.StringValue) { continue; }
+
+                return operand.StringValue;
+            }
+
+            return string.Empty;
+        }
     }
 }
