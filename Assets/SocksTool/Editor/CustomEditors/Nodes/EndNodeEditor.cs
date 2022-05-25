@@ -5,7 +5,7 @@ using UnityEngine;
 namespace SocksTool.Editor.CustomEditors.Nodes
 {
     [CustomNodeEditor(typeof(EndNode))]
-    public class EndNodeEditor : DialogueNodeEditor<EndNode>
+    public class EndNodeEditor : SockNodeEditor<EndNode>
     {
         public override Color GetTint() => NodeColor.EndNodeColor;
     }

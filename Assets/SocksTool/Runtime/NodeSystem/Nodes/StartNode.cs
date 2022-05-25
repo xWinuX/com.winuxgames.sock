@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using SocksTool.Runtime.NodeSystem.Nodes.Core;
 using UnityEngine;
 using XNode;
 
@@ -6,7 +7,7 @@ namespace SocksTool.Runtime.NodeSystem.Nodes
 {
     [NodeWidth(300)]
     [CreateNodeMenu("Dialogue/Start Node")]
-    public class StartNode : DialogueNode
+    public class StartNode : MultiInputNode
     {
         public const string OutputFieldName = nameof(_out);
         public const string TitleFieldName  = nameof(_title);
@@ -21,7 +22,7 @@ namespace SocksTool.Runtime.NodeSystem.Nodes
 
         public string Title { get => _title; set => _title = value; }
 
-        public override object GetValue(NodePort port) => new NodeInfo(_title, 0);
+        public override object GetValue(NodePort port) => new NodeInfo(_title, 0, 0, 0);
 
         public override int GetIndent() => 0;
 

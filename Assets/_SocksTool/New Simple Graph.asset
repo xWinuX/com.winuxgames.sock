@@ -36,16 +36,16 @@ MonoBehaviour:
     values:
     - _fieldName: _in
       _node: {fileID: 602630432327981897}
-      _typeQualifiedName: SocksTool.Runtime.NodeSystem.Nodes.NodeInfo, Assembly-CSharp,
+      _typeQualifiedName: SocksTool.Runtime.NodeSystem.Nodes.Core.NodeInfo, Assembly-CSharp,
         Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
       connections: []
       _direction: 0
-      _connectionType: 0
+      _connectionType: 1
       _typeConstraint: 2
       _dynamic: 0
     - _fieldName: _out
       _node: {fileID: 602630432327981897}
-      _typeQualifiedName: SocksTool.Runtime.NodeSystem.Nodes.NodeInfo, Assembly-CSharp,
+      _typeQualifiedName: SocksTool.Runtime.NodeSystem.Nodes.Core.NodeInfo, Assembly-CSharp,
         Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
       connections: []
       _direction: 1
@@ -55,9 +55,13 @@ MonoBehaviour:
   _in:
     _nodeTitle: 
     _indent: 0
+    _count: 0
+    _offset: 0
   _out:
     _nodeTitle: 
     _indent: 0
+    _count: 0
+    _offset: 0
   _character: 
   _text: 
 --- !u!114 &3636577361653273338
@@ -81,16 +85,16 @@ MonoBehaviour:
     values:
     - _fieldName: _in
       _node: {fileID: 3636577361653273338}
-      _typeQualifiedName: SocksTool.Runtime.NodeSystem.Nodes.NodeInfo, Assembly-CSharp,
+      _typeQualifiedName: SocksTool.Runtime.NodeSystem.Nodes.Core.NodeInfo, Assembly-CSharp,
         Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
       connections: []
       _direction: 0
-      _connectionType: 0
+      _connectionType: 1
       _typeConstraint: 2
       _dynamic: 0
     - _fieldName: _out
       _node: {fileID: 3636577361653273338}
-      _typeQualifiedName: SocksTool.Runtime.NodeSystem.Nodes.NodeInfo, Assembly-CSharp,
+      _typeQualifiedName: SocksTool.Runtime.NodeSystem.Nodes.Core.NodeInfo, Assembly-CSharp,
         Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
       connections: []
       _direction: 1
@@ -100,8 +104,12 @@ MonoBehaviour:
   _in:
     _nodeTitle: 
     _indent: 0
+    _count: 0
+    _offset: 0
   _out:
     _nodeTitle: 
     _indent: 0
+    _count: 0
+    _offset: 0
   _character: 
   _text: 

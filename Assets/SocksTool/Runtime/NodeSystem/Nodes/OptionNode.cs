@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using SocksTool.Runtime.NodeSystem.Nodes.Core;
 using UnityEngine;
 using XNode;
 
@@ -6,7 +7,7 @@ namespace SocksTool.Runtime.NodeSystem.Nodes
 {
     [NodeWidth(300)]
     [CreateNodeMenu("Dialogue/Option")]
-    public class OptionNode : DialogueNode
+    public class OptionNode : SingleInputNode
     {
         public const string OutputFieldName = nameof(_outputList);
 
@@ -21,7 +22,7 @@ namespace SocksTool.Runtime.NodeSystem.Nodes
         public override object GetValue(NodePort port)
         {
             NodeInfo nodeInfo = GetInputValue(InputFieldName, NodeInfo.ErrorNodeInfo);
-            return new NodeInfo(nodeInfo.NodeTitle, nodeInfo.Indent + 1);
+            return new NodeInfo(nodeInfo.NodeTitle, nodeInfo.Indent + 1, 0, nodeInfo.Offset + nodeInfo.Count);
         }
         
         public NodePort AddOption(string option)

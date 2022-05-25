@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using SocksTool.Runtime.NodeSystem.Nodes.Core;
+using UnityEngine;
 using XNode;
 
 namespace SocksTool.Runtime.NodeSystem.Nodes
@@ -19,6 +21,14 @@ namespace SocksTool.Runtime.NodeSystem.Nodes
 
         public override string Name => "Line Node Merger";
 
-        public override object GetValue(NodePort port) => GetInputValue(InputFieldName, NodeInfo.ErrorNodeInfo);
+        public override object GetValue(NodePort port)
+        {
+            NodeInfo[] infos = GetInputValues(InputFieldName, NodeInfo.ErrorNodeInfo);
+
+            int offset       = infos.Sum(nodeInfo => nodeInfo.Offset);
+            int lowestIndent = infos.Min(nodeInfo => nodeInfo.Indent);
+
+            return new NodeInfo(infos[0].NodeTitle, lowestIndent, 0, offset);
+        }
     }
 }

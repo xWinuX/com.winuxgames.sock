@@ -1,11 +1,12 @@
 ﻿using SocksTool.Runtime.NodeSystem.Nodes;
+using SocksTool.Runtime.NodeSystem.Nodes.Core;
 using UnityEngine;
 using XNodeEditor;
 
 namespace SocksTool.Editor.CustomEditors.Nodes
 {
-    [CustomNodeEditor(typeof(DialogueNode))]
-    public abstract class DialogueNodeEditor<T> : NodeEditor where T : SockNode
+    [CustomNodeEditor(typeof(SockNode))]
+    public abstract class SockNodeEditor<T> : NodeEditor where T : SockNode
     {
         protected T TargetNode;
         

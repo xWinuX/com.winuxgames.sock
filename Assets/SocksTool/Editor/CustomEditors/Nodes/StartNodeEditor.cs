@@ -7,7 +7,7 @@ using XNodeEditor;
 namespace SocksTool.Editor.CustomEditors.Nodes
 {
     [CustomNodeEditor(typeof(StartNode))]
-    public class StartNodeEditor : DialogueNodeEditor<StartNode>
+    public class StartNodeEditor : SockNodeEditor<StartNode>
     {
         protected override void DrawNode()
         {

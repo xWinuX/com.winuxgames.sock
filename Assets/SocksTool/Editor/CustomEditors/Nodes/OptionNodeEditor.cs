@@ -1,6 +1,7 @@
 ﻿using SocksTool.Editor.Utility;
 using SocksTool.Runtime.Extensions;
 using SocksTool.Runtime.NodeSystem.Nodes;
+using SocksTool.Runtime.NodeSystem.Nodes.Core;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -10,7 +11,7 @@ using XNodeEditor;
 namespace SocksTool.Editor.CustomEditors.Nodes
 {
     [CustomNodeEditor(typeof(OptionNode))]
-    public class OptionNodeEditor : DialogueNodeEditor<OptionNode>
+    public class OptionNodeEditor : SockNodeEditor<OptionNode>
     {
         private int _selectIndex = -1;
 

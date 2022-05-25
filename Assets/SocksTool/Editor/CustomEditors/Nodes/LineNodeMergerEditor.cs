@@ -7,7 +7,7 @@ using XNodeEditor;
 namespace SocksTool.Editor.CustomEditors.Nodes
 {
     [CustomNodeEditor(typeof(LineNodeMerger))]
-    public class LineNodeMergerEditor : DialogueNodeEditor<LineNodeMerger>
+    public class LineNodeMergerEditor : SockNodeEditor<LineNodeMerger>
     {
         protected override void DrawNode()
         {
@@ -17,6 +17,6 @@ namespace SocksTool.Editor.CustomEditors.Nodes
             EditorGUILayout.EndHorizontal();
         }
         
-        public override Color GetTint() => NodeColor.StartNodeColor;
+        public override Color GetTint() => NodeColor.LineNodeMergerColor;
     }
 }

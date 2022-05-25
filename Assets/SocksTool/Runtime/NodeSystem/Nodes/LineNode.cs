@@ -1,5 +1,5 @@
-using System.Linq;
 using System.Text;
+using SocksTool.Runtime.NodeSystem.Nodes.Core;
 using UnityEngine;
 using XNode;
 
@@ -7,7 +7,7 @@ namespace SocksTool.Runtime.NodeSystem.Nodes
 {
     [NodeWidth(300)]
     [CreateNodeMenu("Dialogue/Line")]
-    public class LineNode : DialogueNode
+    public class LineNode : SingleInputNode
     {
         public const string OutputFieldName = nameof(_out);
 
@@ -29,10 +29,16 @@ namespace SocksTool.Runtime.NodeSystem.Nodes
 
         public bool HasMultipleInputs => GetInputValues(InputFieldName, NodeInfo.ErrorNodeInfo)?.Length > 1;
 
-        public override object GetValue(NodePort port) => GetInputValue(InputFieldName, NodeInfo.ErrorNodeInfo);
+        public override object GetValue(NodePort port)
+        {
+            NodeInfo nodeInfo = GetInputValue(InputFieldName, NodeInfo.ErrorNodeInfo);
+            return new NodeInfo(nodeInfo.NodeTitle, nodeInfo.Indent, nodeInfo.Count+1, nodeInfo.Offset);
+        }
 
         public override void GetText(StringBuilder sb)
         {
+            base.GetText(sb);
+            
             if (!string.IsNullOrWhiteSpace(_character))
             {
                 sb.Append(Character);

@@ -6,7 +6,7 @@ using XNodeEditor;
 namespace SocksTool.Editor.CustomEditors.Nodes
 {
     [CustomNodeEditor(typeof(LineNode))]
-    public class LineNodeEditor : DialogueNodeEditor<LineNode>
+    public class LineNodeEditor : SockNodeEditor<LineNode>
     {
         public override void OnHeaderGUI()
         {
@@ -26,12 +26,6 @@ namespace SocksTool.Editor.CustomEditors.Nodes
             NodeEditorGUILayout.PropertyField(serializedObject.FindProperty("_text"), GUIContent.none);
         }
         
-        
-        public override Color GetTint()
-        {
-            if (TargetNode == null) { return Color.red; }
-            
-            return TargetNode.HasMultipleInputs ? NodeColor.EndNodeColor : NodeColor.LineNodeColor;
-        }
+        public override Color GetTint() => NodeColor.LineNodeColor;
     }
 }

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using SocksTool.Runtime.NodeSystem.NodeGraphs;
 using SocksTool.Runtime.NodeSystem.Nodes;
+using SocksTool.Runtime.NodeSystem.Nodes.Core;
 using SocksTool.Runtime.Utility;
-using Unity.VisualScripting;
 using UnityEngine;
 using XNode;
 using Yarn;
@@ -22,20 +22,19 @@ namespace SocksTool.Editor.CustomEditors.Builders
             Dictionary<string, List<NodePort>> jumpDictionary = new Dictionary<string, List<NodePort>>();
 
             DialogueGraph dialogueGraph = ScriptableObject.CreateInstance<DialogueGraph>();
-
+            
             int nodeCount = 0;
-            foreach ((string key, Node node) in result.Program.Nodes)
+            foreach ((string _, Node node) in result.Program.Nodes)
             {
-                Debug.Log("Key: " + key);
-                Debug.Log("labels");
-                foreach ((string s, int value) in node.Labels) { Debug.Log(s + " " + value); }
-
+                DebugLabels(node);
+                
                 OptionNode currentOptionNode = null;
 
                 bool popped = false;
 
-                int width = 0;
-                int depth = 0;
+                int width    = 0;
+                int maxWidth = 0;
+                int depth    = 0;
 
                 StartNode startNode = ScriptableObject.CreateInstance<StartNode>();
                 startNode.Title = node.Name;
@@ -43,10 +42,7 @@ namespace SocksTool.Editor.CustomEditors.Builders
                 if (jumpDictionary.TryGetValue(node.Name, out List<NodePort> nodePorts))
                 {
                     NodePort input = startNode.GetInputPort(StartNode.InputFieldName);
-                    foreach (NodePort nodePort in nodePorts)
-                    {
-                        nodePort.Connect(input);
-                    }
+                    foreach (NodePort nodePort in nodePorts) { nodePort.Connect(input); }
                 }
 
                 NodeTree        nodeTree        = new NodeTree(new List<XNode.Node> { startNode }, startNode.GetOutputPort(StartNode.OutputFieldName));
@@ -56,45 +52,68 @@ namespace SocksTool.Editor.CustomEditors.Builders
 
                 nodeTreeStack.Push(nodeTree);
 
-                void AddNewNode<T>(T dNode, string inputFieldName, string outputFieldName = null) where T : XNode.Node
+                void AddWidth(int num = 1)
+                {
+                    width += num;
+                    if (width > maxWidth) { maxWidth = width; }
+                }
+
+                void RemoveWidth(int num = 1) { width -= num; }
+
+                void AddNewNode<T>(T newNode, string inputFieldName, string outputFieldName = null) where T : XNode.Node
                 {
                     // Add nodes to graph
                     XNode.Node.graphHotfix = dialogueGraph;
-                    dNode.graph = dialogueGraph;
-                    dialogueGraph.nodes.Add(dNode);
+                    newNode.graph          = dialogueGraph;
+                    dialogueGraph.nodes.Add(newNode);
 
                     // Add nodes to compile structure
                     NodeTree currentNodeTree = nodeTreeStack.Peek();
-                    currentNodeTree.Nodes.Add(dNode);
-                    
-                    // Set positions of nodes
-                    dNode.position.x = width * 350;
-                    dNode.position.y = -depth * 200 + 800 * nodeCount;
+                    currentNodeTree.Nodes.Add(newNode);
 
                     // Connect newly created node to last output if it exists
                     NodePort nodePort = currentNodeTree.LastOutputPort;
                     if (nodePort != null)
                     {
-                        NodePort input = dNode.GetInputPort(inputFieldName);
+                        NodePort input = newNode.GetInputPort(inputFieldName);
                         nodePort.Connect(input);
                     }
 
                     // If there are open output port connect them to the new node as well
                     if (openOutputPorts.Count > 0)
                     {
-                        NodePort input = dNode.GetInputPort(inputFieldName);
-                        foreach (NodePort openOutputPort in openOutputPorts) { openOutputPort?.Connect(input); }
-
+                        List<NodePort> outputPorts = new List<NodePort>(openOutputPorts);
                         openOutputPorts.Clear();
+                        XNode.Node nodeToConnectTo = newNode;
+                        
+                        width = maxWidth;
+                        if (nodeToConnectTo as MultiInputNode == null)
+                        {
+                            nodeToConnectTo = ScriptableObject.CreateInstance<LineNodeMerger>();
+
+                            AddWidth();
+                            AddNewNode(nodeToConnectTo, LineNodeMerger.InputFieldName, LineNodeMerger.OutputFieldName);
+                         
+                            
+                            NodePort newNodeInput = newNode.GetInputPort(inputFieldName);
+                            NodePort output       = nodeToConnectTo.GetOutputPort(LineNodeMerger.OutputFieldName);
+                            output.Connect(newNodeInput);
+                        }
+
+                        NodePort input = nodeToConnectTo.GetInputPort(LineNodeMerger.InputFieldName);
+                        foreach (NodePort openOutputPort in outputPorts) { openOutputPort?.Connect(input); }
                     }
 
                     // Get new output port form new node
-                    if (outputFieldName != null) { currentNodeTree.LastOutputPort = dNode.GetOutputPort(outputFieldName); }
+                    if (outputFieldName != null) { currentNodeTree.LastOutputPort = newNode.GetOutputPort(outputFieldName); }
                     else { nodeTreeStack.Peek().LastOutputPort                    = null; }
 
-                    width++;
+                    // Set positions of nodes
+                    newNode.position.x = width * 350;
+                    newNode.position.y = -depth * 200 + 800 * nodeCount;
+                    AddWidth();
                 }
-                
+
                 void PopHandler()
                 {
                     if (!popped) { return; }
@@ -134,7 +153,7 @@ namespace SocksTool.Editor.CustomEditors.Builders
                             string operandStringValue = YarnUtility.GetOperandStringValue(instruction.Operands);
 
                             NodePort output = currentOptionNode.AddOption(result.StringTable[operandStringValue].text);
-                            
+
                             nodeTreeStack.Peek().SubNodes.Push(new NodeTree(new List<XNode.Node>(), output));
                             depth++;
                             break;
@@ -142,7 +161,7 @@ namespace SocksTool.Editor.CustomEditors.Builders
                             NodeTree tree = nodeTreeStack.Pop();
                             openNodeQueues.Add(tree);
                             popped =  false;
-                            width  -= tree.SubNodes.Count;
+                            RemoveWidth(tree.Nodes.Count);
                             depth--;
                             break;
 
@@ -159,12 +178,13 @@ namespace SocksTool.Editor.CustomEditors.Builders
                         case Instruction.Types.OpCode.PushString:
                             string jumpNode = YarnUtility.GetOperandStringValue(instruction.Operands);
                             if (!jumpDictionary.ContainsKey(jumpNode)) { jumpDictionary.Add(jumpNode, new List<NodePort>()); }
+
                             jumpDictionary[jumpNode].Add(nodeTreeStack.Peek().LastOutputPort);
                             break;
-                        
+
                         case Instruction.Types.OpCode.Stop:
                             PopHandler();
-                            EndNode  endNode = ScriptableObject.CreateInstance<EndNode>();
+                            EndNode endNode = ScriptableObject.CreateInstance<EndNode>();
                             AddNewNode(endNode, EndNode.InputFieldName);
                             break;
                     }
@@ -193,7 +213,7 @@ namespace SocksTool.Editor.CustomEditors.Builders
 
             return result;
         }
-        
+
         private static LineNode CreateRunLineNode(Instruction instruction, IDictionary<string, StringInfo> stringTable)
         {
             LineNode lineNode = ScriptableObject.CreateInstance<LineNode>();
@@ -210,6 +230,15 @@ namespace SocksTool.Editor.CustomEditors.Builders
             else { lineNode.Text = markupParseResult.Text; }
 
             return lineNode;
+        }
+
+        private static void DebugLabels(Node node)
+        {
+            Debug.Log("Labels:");
+            foreach ((string labelName, int instructionNumber) in node.Labels)
+            {
+                Debug.Log("- " + labelName + " at instruction " + instructionNumber);
+            }
         }
         
         private static void DebugInstruction(Instruction instruction, IDictionary<string, StringInfo> stringTable, int count)
