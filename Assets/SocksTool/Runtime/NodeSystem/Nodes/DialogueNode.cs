@@ -3,18 +3,20 @@ using XNode;
 
 namespace SocksTool.Runtime.NodeSystem.Nodes
 {
-    public abstract class DialogueNode : Node
+    public abstract class DialogueNode : SockNode
     {
-        public const string InputFieldName = nameof(_in);
-        
         [SerializeField]
-        [Input]
-        private LineNode _in;
-        
-        public LineNode In => _in;
+        [Input(typeConstraint = TypeConstraint.Strict, connectionType = ConnectionType.Multiple)]
+        private NodeInfo _in;
 
-        public override object GetValue(NodePort port) => _in;
+        public NodeInfo In => _in;
 
-        public virtual string GetText() => string.Empty;
+        public override object GetValue(NodePort port) => GetInputValue(InputFieldName, NodeInfo.ErrorNodeInfo);
+
+        protected override void Init()
+        {
+            base.Init();
+            name = Name;
+        }
     }
 }

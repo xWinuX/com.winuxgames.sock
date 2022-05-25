@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using SocksTool.Runtime.NodeSystem.NodeGraphs;
 using SocksTool.Runtime.NodeSystem.Nodes;
 using SocksTool.Runtime.Utility;
+using Unity.VisualScripting;
 using UnityEngine;
 using XNode;
 using Yarn;
@@ -10,9 +11,9 @@ using Yarn.Compiler;
 using Yarn.Markup;
 using Node = Yarn.Node;
 
-namespace SocksTool.Editor
+namespace SocksTool.Editor.CustomEditors.Builders
 {
-    public static class YarnDialogueGraphBuilder
+    public static class YarnToDialogueGraphBuilder
     {
         public static DialogueGraph Build(string yarnAssetPath)
         {
@@ -57,14 +58,20 @@ namespace SocksTool.Editor
 
                 void AddNewNode<T>(T dNode, string inputFieldName, string outputFieldName = null) where T : XNode.Node
                 {
+                    // Add nodes to graph
+                    XNode.Node.graphHotfix = dialogueGraph;
+                    dNode.graph = dialogueGraph;
                     dialogueGraph.nodes.Add(dNode);
 
+                    // Add nodes to compile structure
                     NodeTree currentNodeTree = nodeTreeStack.Peek();
                     currentNodeTree.Nodes.Add(dNode);
-
+                    
+                    // Set positions of nodes
                     dNode.position.x = width * 350;
                     dNode.position.y = -depth * 200 + 800 * nodeCount;
 
+                    // Connect newly created node to last output if it exists
                     NodePort nodePort = currentNodeTree.LastOutputPort;
                     if (nodePort != null)
                     {
@@ -72,6 +79,7 @@ namespace SocksTool.Editor
                         nodePort.Connect(input);
                     }
 
+                    // If there are open output port connect them to the new node as well
                     if (openOutputPorts.Count > 0)
                     {
                         NodePort input = dNode.GetInputPort(inputFieldName);
@@ -80,12 +88,13 @@ namespace SocksTool.Editor
                         openOutputPorts.Clear();
                     }
 
+                    // Get new output port form new node
                     if (outputFieldName != null) { currentNodeTree.LastOutputPort = dNode.GetOutputPort(outputFieldName); }
                     else { nodeTreeStack.Peek().LastOutputPort                    = null; }
 
                     width++;
                 }
-
+                
                 void PopHandler()
                 {
                     if (!popped) { return; }
@@ -102,9 +111,10 @@ namespace SocksTool.Editor
 
                 AddNewNode(startNode, StartNode.InputFieldName, StartNode.OutputFieldName);
 
+                int programCounter = 0;
                 foreach (Instruction instruction in node.Instructions)
                 {
-                    DebugInstruction(instruction, result.StringTable);
+                    DebugInstruction(instruction, result.StringTable, programCounter);
 
                     switch (instruction.Opcode)
                     {
@@ -121,18 +131,10 @@ namespace SocksTool.Editor
                                 AddNewNode(currentOptionNode, OptionNode.InputFieldName);
                             }
 
-                            NodePort output = currentOptionNode.AddDynamicOutput(
-                                typeof(string),
-                                XNode.Node.ConnectionType.Override,
-                                XNode.Node.TypeConstraint.None,
-                                OptionNode.OptionsFieldName + " " + currentOptionNode.Options.Count
-                            );
-
                             string operandStringValue = YarnUtility.GetOperandStringValue(instruction.Operands);
-                            currentOptionNode.Options.Add(result.StringTable[operandStringValue].text);
 
-                            currentOptionNode.UpdatePorts();
-
+                            NodePort output = currentOptionNode.AddOption(result.StringTable[operandStringValue].text);
+                            
                             nodeTreeStack.Peek().SubNodes.Push(new NodeTree(new List<XNode.Node>(), output));
                             depth++;
                             break;
@@ -166,6 +168,8 @@ namespace SocksTool.Editor
                             AddNewNode(endNode, EndNode.InputFieldName);
                             break;
                     }
+
+                    programCounter++;
                 }
 
                 nodeCount++;
@@ -189,8 +193,7 @@ namespace SocksTool.Editor
 
             return result;
         }
-
-
+        
         private static LineNode CreateRunLineNode(Instruction instruction, IDictionary<string, StringInfo> stringTable)
         {
             LineNode lineNode = ScriptableObject.CreateInstance<LineNode>();
@@ -208,10 +211,10 @@ namespace SocksTool.Editor
 
             return lineNode;
         }
-
-        private static void DebugInstruction(Instruction instruction, IDictionary<string, StringInfo> stringTable)
+        
+        private static void DebugInstruction(Instruction instruction, IDictionary<string, StringInfo> stringTable, int count)
         {
-            Debug.Log("OP Code: " + instruction.Opcode);
+            Debug.Log(count + " OP Code: " + instruction.Opcode);
             DebugOperands(instruction.Operands, stringTable);
         }
 

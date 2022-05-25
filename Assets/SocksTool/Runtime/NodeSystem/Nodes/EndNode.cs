@@ -1,13 +1,21 @@
-﻿namespace SocksTool.Runtime.NodeSystem.Nodes
+﻿using System.Text;
+using XNode;
+
+namespace SocksTool.Runtime.NodeSystem.Nodes
 {
     [NodeWidth(100)]
-    [CreateNodeMenu("Dialogue/Node End")]
+    [CreateNodeMenu("Dialogue/End Node")]
     public class EndNode : DialogueNode
     {
-        protected override void Init()
+        public override string Name => "End Node";
+
+        public override object GetValue(NodePort port) => new NodeInfo(string.Empty, 0);
+
+        public override int GetIndent() => 0;
+
+        public override void GetText(StringBuilder sb)
         {
-            base.Init();
-            name = "End";
+            sb.AppendLine("===");
         }
     }
 }

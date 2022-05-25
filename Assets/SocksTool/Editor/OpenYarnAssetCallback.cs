@@ -1,3 +1,4 @@
+using SocksTool.Editor.CustomEditors.Builders;
 using SocksTool.Runtime.NodeSystem.NodeGraphs;
 using UnityEditor;
 using XNodeEditor;
@@ -15,7 +16,7 @@ namespace SocksTool.Editor
 
             if (!path.EndsWith(".yarn")) { return false; }
 
-            DialogueGraph dialogueGraph = YarnDialogueGraphBuilder.Build(path);
+            DialogueGraph dialogueGraph = YarnToDialogueGraphBuilder.Build(path);
             NodeEditorWindow.Open(dialogueGraph);
             
             return true;

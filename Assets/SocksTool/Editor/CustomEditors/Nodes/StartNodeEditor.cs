@@ -1,9 +1,10 @@
-﻿using SocksTool.Runtime.NodeSystem.Nodes;
+﻿using SocksTool.Editor.Utility;
+using SocksTool.Runtime.NodeSystem.Nodes;
 using UnityEditor;
 using UnityEngine;
 using XNodeEditor;
 
-namespace SocksTool.Editor.Editors
+namespace SocksTool.Editor.CustomEditors.Nodes
 {
     [CustomNodeEditor(typeof(StartNode))]
     public class StartNodeEditor : DialogueNodeEditor<StartNode>

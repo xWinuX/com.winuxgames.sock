@@ -25,38 +25,41 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 346efa40b4e5494399dec6bc68f618b0, type: 3}
-  m_Name: Dialogue
+  m_Name: Line
   m_EditorClassIdentifier: 
   graph: {fileID: 11400000}
   position: {x: -200, y: -8}
   ports:
     keys:
-    - In
-    - Out
+    - _in
+    - _out
     values:
-    - _fieldName: In
+    - _fieldName: _in
       _node: {fileID: 602630432327981897}
-      _typeQualifiedName: SocksTool.Runtime.DialogueNode, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
+      _typeQualifiedName: SocksTool.Runtime.NodeSystem.Nodes.NodeInfo, Assembly-CSharp,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
       connections: []
       _direction: 0
       _connectionType: 0
-      _typeConstraint: 0
+      _typeConstraint: 2
       _dynamic: 0
-    - _fieldName: Out
+    - _fieldName: _out
       _node: {fileID: 602630432327981897}
-      _typeQualifiedName: SocksTool.Runtime.DialogueNode, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: In
-        node: {fileID: 3636577361653273338}
-        reroutePoints: []
+      _typeQualifiedName: SocksTool.Runtime.NodeSystem.Nodes.NodeInfo, Assembly-CSharp,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections: []
       _direction: 1
-      _connectionType: 0
+      _connectionType: 1
       _typeConstraint: 0
       _dynamic: 0
-  In: {fileID: 0}
-  Out: {fileID: 0}
+  _in:
+    _nodeTitle: 
+    _indent: 0
+  _out:
+    _nodeTitle: 
+    _indent: 0
+  _character: 
+  _text: 
 --- !u!114 &3636577361653273338
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67,35 +70,38 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 346efa40b4e5494399dec6bc68f618b0, type: 3}
-  m_Name: Dialogue
+  m_Name: Line
   m_EditorClassIdentifier: 
   graph: {fileID: 11400000}
   position: {x: 8, y: -8}
   ports:
     keys:
-    - In
-    - Out
+    - _in
+    - _out
     values:
-    - _fieldName: In
+    - _fieldName: _in
       _node: {fileID: 3636577361653273338}
-      _typeQualifiedName: SocksTool.Runtime.DialogueNode, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: Out
-        node: {fileID: 602630432327981897}
-        reroutePoints: []
+      _typeQualifiedName: SocksTool.Runtime.NodeSystem.Nodes.NodeInfo, Assembly-CSharp,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections: []
       _direction: 0
       _connectionType: 0
-      _typeConstraint: 0
+      _typeConstraint: 2
       _dynamic: 0
-    - _fieldName: Out
+    - _fieldName: _out
       _node: {fileID: 3636577361653273338}
-      _typeQualifiedName: SocksTool.Runtime.DialogueNode, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
+      _typeQualifiedName: SocksTool.Runtime.NodeSystem.Nodes.NodeInfo, Assembly-CSharp,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
       connections: []
       _direction: 1
-      _connectionType: 0
+      _connectionType: 1
       _typeConstraint: 0
       _dynamic: 0
-  In: {fileID: 0}
-  Out: {fileID: 0}
+  _in:
+    _nodeTitle: 
+    _indent: 0
+  _out:
+    _nodeTitle: 
+    _indent: 0
+  _character: 
+  _text: 

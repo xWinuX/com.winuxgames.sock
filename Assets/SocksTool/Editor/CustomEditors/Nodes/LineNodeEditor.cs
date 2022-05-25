@@ -1,12 +1,20 @@
-﻿using SocksTool.Runtime.NodeSystem.Nodes;
+﻿using SocksTool.Editor.Utility;
+using SocksTool.Runtime.NodeSystem.Nodes;
 using UnityEngine;
 using XNodeEditor;
 
-namespace SocksTool.Editor.Editors
+namespace SocksTool.Editor.CustomEditors.Nodes
 {
     [CustomNodeEditor(typeof(LineNode))]
     public class LineNodeEditor : DialogueNodeEditor<LineNode>
     {
+        public override void OnHeaderGUI()
+        {
+            if (TargetNode == null) { return; }
+
+            GUILayout.Label(TargetNode.Name, NodeEditorResources.styles.nodeHeader, GUILayout.Height(30));
+        }
+
         protected override void DrawNode()
         {
             GUILayout.BeginHorizontal();
@@ -17,7 +25,13 @@ namespace SocksTool.Editor.Editors
 
             NodeEditorGUILayout.PropertyField(serializedObject.FindProperty("_text"), GUIContent.none);
         }
-
-        public override Color GetTint() => NodeColor.LineNodeColor;
+        
+        
+        public override Color GetTint()
+        {
+            if (TargetNode == null) { return Color.red; }
+            
+            return TargetNode.HasMultipleInputs ? NodeColor.EndNodeColor : NodeColor.LineNodeColor;
+        }
     }
 }

@@ -1,10 +1,11 @@
-﻿using UnityEngine;
+﻿using System.Text;
+using UnityEngine;
 using XNode;
 
 namespace SocksTool.Runtime.NodeSystem.Nodes
 {
     [NodeWidth(300)]
-    [CreateNodeMenu("Dialogue/Node Start")]
+    [CreateNodeMenu("Dialogue/Start Node")]
     public class StartNode : DialogueNode
     {
         public const string OutputFieldName = nameof(_out);
@@ -12,18 +13,24 @@ namespace SocksTool.Runtime.NodeSystem.Nodes
 
         [SerializeField]
         [Output(connectionType = ConnectionType.Override)]
-        private LineNode _out;
+        private NodeInfo _out;
 
         [SerializeField] private string _title;
 
-        protected override void Init()
-        {
-            base.Init();
-            name = "Start";
-        }
+        public override string Name => "Start Node";
 
         public string Title { get => _title; set => _title = value; }
 
-        public override object GetValue(NodePort port) => In;
+        public override object GetValue(NodePort port) => new NodeInfo(_title, 0);
+
+        public override int GetIndent() => 0;
+
+        public override void GetText(StringBuilder sb)
+        {
+            sb.Append("title: ");
+            sb.Append(_title);
+            sb.AppendLine();
+            sb.AppendLine("---");
+        }
     }
 }

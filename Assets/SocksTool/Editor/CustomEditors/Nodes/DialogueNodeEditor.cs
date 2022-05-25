@@ -1,20 +1,25 @@
 ﻿using SocksTool.Runtime.NodeSystem.Nodes;
 using UnityEngine;
-using XNode;
 using XNodeEditor;
 
-namespace SocksTool.Editor.Editors
+namespace SocksTool.Editor.CustomEditors.Nodes
 {
     [CustomNodeEditor(typeof(DialogueNode))]
-    public abstract class DialogueNodeEditor<T> : NodeEditor where T : Node
+    public abstract class DialogueNodeEditor<T> : NodeEditor where T : SockNode
     {
         protected T TargetNode;
-
+        
         public override void OnBodyGUI()
         {
             if (TargetNode == null) { TargetNode = target as T; }
 
             serializedObject.Update();
+
+            if (TargetNode != null)
+            {
+                GUILayout.Label(TargetNode.GetName());
+            
+            }
 
             DrawNode();
 
@@ -23,6 +28,6 @@ namespace SocksTool.Editor.Editors
 
         protected virtual void DrawNode() { DrawInputNodePort(); }
 
-        protected void DrawInputNodePort() { NodeEditorGUILayout.PortField(new GUIContent(""), TargetNode.GetInputPort(DialogueNode.InputFieldName), GUILayout.MaxWidth(0)); }
+        protected void DrawInputNodePort() { NodeEditorGUILayout.PortField(new GUIContent(""), TargetNode.GetInputPort(SockNode.InputFieldName), GUILayout.MaxWidth(0)); }
     }
 }

@@ -1,7 +1,8 @@
-﻿using SocksTool.Runtime.NodeSystem.Nodes;
+﻿using SocksTool.Editor.Utility;
+using SocksTool.Runtime.NodeSystem.Nodes;
 using UnityEngine;
 
-namespace SocksTool.Editor.Editors
+namespace SocksTool.Editor.CustomEditors.Nodes
 {
     [CustomNodeEditor(typeof(EndNode))]
     public class EndNodeEditor : DialogueNodeEditor<EndNode>
