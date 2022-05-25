@@ -16,7 +16,8 @@ namespace SocksTool.Editor
 
             if (!path.EndsWith(".yarn")) { return false; }
 
-            DialogueGraph dialogueGraph = YarnToDialogueGraphBuilder.Build(path);
+            YarnToDialogueGraphBuilder builder       = new YarnToDialogueGraphBuilder();
+            DialogueGraph              dialogueGraph = builder.Build(path);
             NodeEditorWindow.Open(dialogueGraph);
             
             return true;

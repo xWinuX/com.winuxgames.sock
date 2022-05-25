@@ -15,23 +15,7 @@ Character: And Questions!
         nested reply 1
     -> Nested Option 2
         nested reply 2
-        asjdasjjdasjjdjsd
-        -> HUA UAA
-            asjdlkasldjlasd
-        -> asjdajsdjsajd
-            jasdjajsdjasd
-            -> jaskdasjd
-                asjdlkasldjlasd
-            -> asjdasjjdasjjdjsd
-                ajskldjsad
-            -> jasdkjasjdaskd
-                jaskdjksadjasd
-            ajsdkjajdkasjd
-        jasdjasjdjasdjad
-    jasdkajskdjaskdlj
--> Option 3
-    This is the reply after Option 2
-
+    Text after nested options
 OtherCharacter: And this text will always appear after the options are done!
 ===
 

@@ -1,201 +1,256 @@
 ﻿using System;
 using System.Collections.Generic;
+using Google.Protobuf.Collections;
 using SocksTool.Runtime.NodeSystem.NodeGraphs;
 using SocksTool.Runtime.NodeSystem.Nodes;
-using SocksTool.Runtime.NodeSystem.Nodes.Core;
 using SocksTool.Runtime.Utility;
 using UnityEngine;
 using XNode;
 using Yarn;
 using Yarn.Compiler;
 using Yarn.Markup;
-using Node = Yarn.Node;
+using Node = XNode.Node;
+
 
 namespace SocksTool.Editor.CustomEditors.Builders
 {
-    public static class YarnToDialogueGraphBuilder
+    public class YarnToDialogueGraphBuilder
     {
-        public static DialogueGraph Build(string yarnAssetPath)
+        private const int IterationLimit = 10000;
+
+        /// <summary>
+        /// Horizontal and vertical spacing between nodes automatically created nodes
+        /// </summary>
+        public Vector2 Spacing { get; set; } = new Vector2(350, 150);
+
+        private readonly Dictionary<string, Node>           _nodeLookup = new Dictionary<string, Node>();
+        private readonly Dictionary<string, List<NodePort>> _jumpLookup = new Dictionary<string, List<NodePort>>();
+        private          DialogueGraph                      _dialogueGraph;
+        private          Vector2                            _nodeCursor;
+
+        /// <summary>
+        /// Build dialogue graph out of given yarn asset
+        /// </summary>
+        /// <param name="yarnAssetPath">Path of yarn asset to use</param>
+        /// <returns>A dialogue graph populated with nodes read from the yarn file</returns>
+        /// <exception cref="OverflowException">This is usually caused by an invalid yarn file, but can also occur if the given file is really large</exception>
+        public DialogueGraph Build(string yarnAssetPath)
         {
+            ResetState();
+
             CompilationResult result = CompileYarnFile(yarnAssetPath);
 
-            Dictionary<string, List<NodePort>> jumpDictionary = new Dictionary<string, List<NodePort>>();
+            _dialogueGraph = ScriptableObject.CreateInstance<DialogueGraph>();
 
-            DialogueGraph dialogueGraph = ScriptableObject.CreateInstance<DialogueGraph>();
-            
-            int nodeCount = 0;
-            foreach ((string _, Node node) in result.Program.Nodes)
+            foreach ((string _, Yarn.Node node) in result.Program.Nodes)
             {
-                DebugLabels(node);
-                
-                OptionNode currentOptionNode = null;
-
-                bool popped = false;
-
-                int width    = 0;
-                int maxWidth = 0;
-                int depth    = 0;
-
-                StartNode startNode = ScriptableObject.CreateInstance<StartNode>();
+                // Add and setup start node
+                TryAddNode("Start_" + node.Name, out StartNode startNode);
                 startNode.Title = node.Name;
 
-                if (jumpDictionary.TryGetValue(node.Name, out List<NodePort> nodePorts))
+                // Are there any outputs waiting for this node, if yes connect them to it
+                if (_jumpLookup.TryGetValue(node.Name, out List<NodePort> jumpOutputs))
                 {
-                    NodePort input = startNode.GetInputPort(StartNode.InputFieldName);
-                    foreach (NodePort nodePort in nodePorts) { nodePort.Connect(input); }
+                    NodePort startNodeInput = startNode.GetInputPort(StartNode.InputFieldName);
+                    foreach (NodePort jumpOutput in jumpOutputs) { jumpOutput.Connect(startNodeInput); }
                 }
 
-                NodeTree        nodeTree        = new NodeTree(new List<XNode.Node> { startNode }, startNode.GetOutputPort(StartNode.OutputFieldName));
-                List<NodeTree>  openNodeQueues  = new List<NodeTree>();
-                List<NodePort>  openOutputPorts = new List<NodePort>();
-                Stack<NodeTree> nodeTreeStack   = new Stack<NodeTree>();
+                Stack<string>   stringStack       = new Stack<string>();
+                Stack<OpenPath> openPaths         = new Stack<OpenPath>();
+                OptionNode      currentOptionNode = null;
+                NodePort        currentOutput     = startNode.GetOutputPort(StartNode.OutputFieldName);
 
-                nodeTreeStack.Push(nodeTree);
-
-                void AddWidth(int num = 1)
+                bool stop           = false;
+                int  programCounter = 0;
+                int  iterationLimit = IterationLimit;
+                while (iterationLimit > 0 && !stop)
                 {
-                    width += num;
-                    if (width > maxWidth) { maxWidth = width; }
-                }
+                    Instruction instruction = node.Instructions[programCounter];
 
-                void RemoveWidth(int num = 1) { width -= num; }
+                    string   stringKey;
+                    OpenPath openPath;
 
-                void AddNewNode<T>(T newNode, string inputFieldName, string outputFieldName = null) where T : XNode.Node
-                {
-                    // Add nodes to graph
-                    XNode.Node.graphHotfix = dialogueGraph;
-                    newNode.graph          = dialogueGraph;
-                    dialogueGraph.nodes.Add(newNode);
-
-                    // Add nodes to compile structure
-                    NodeTree currentNodeTree = nodeTreeStack.Peek();
-                    currentNodeTree.Nodes.Add(newNode);
-
-                    // Connect newly created node to last output if it exists
-                    NodePort nodePort = currentNodeTree.LastOutputPort;
-                    if (nodePort != null)
+                    // Stops current execution path and checks if another can be started, if not end loop
+                    void StopCurrentExecutionPath()
                     {
-                        NodePort input = newNode.GetInputPort(inputFieldName);
-                        nodePort.Connect(input);
-                    }
-
-                    // If there are open output port connect them to the new node as well
-                    if (openOutputPorts.Count > 0)
-                    {
-                        List<NodePort> outputPorts = new List<NodePort>(openOutputPorts);
-                        openOutputPorts.Clear();
-                        XNode.Node nodeToConnectTo = newNode;
-                        
-                        width = maxWidth;
-                        if (nodeToConnectTo as MultiInputNode == null)
+                        if (openPaths.Count > 0)
                         {
-                            nodeToConnectTo = ScriptableObject.CreateInstance<LineNodeMerger>();
+                            openPath = openPaths.Pop();
 
-                            AddWidth();
-                            AddNewNode(nodeToConnectTo, LineNodeMerger.InputFieldName, LineNodeMerger.OutputFieldName);
-                         
-                            
-                            NodePort newNodeInput = newNode.GetInputPort(inputFieldName);
-                            NodePort output       = nodeToConnectTo.GetOutputPort(LineNodeMerger.OutputFieldName);
-                            output.Connect(newNodeInput);
+                            currentOutput  = openPath.NodePort;
+                            programCounter = GetProgramCounterFromLabel(node.Labels, openPath.Label);
                         }
-
-                        NodePort input = nodeToConnectTo.GetInputPort(LineNodeMerger.InputFieldName);
-                        foreach (NodePort openOutputPort in outputPorts) { openOutputPort?.Connect(input); }
+                        else { stop = true; }
                     }
-
-                    // Get new output port form new node
-                    if (outputFieldName != null) { currentNodeTree.LastOutputPort = newNode.GetOutputPort(outputFieldName); }
-                    else { nodeTreeStack.Peek().LastOutputPort                    = null; }
-
-                    // Set positions of nodes
-                    newNode.position.x = width * 350;
-                    newNode.position.y = -depth * 200 + 800 * nodeCount;
-                    AddWidth();
-                }
-
-                void PopHandler()
-                {
-                    if (!popped) { return; }
-
-                    foreach (NodeTree openNodeQueue in openNodeQueues)
-                    {
-                        Debug.Log(openNodeQueue.LastOutputPort);
-                        openOutputPorts.Add(openNodeQueue.LastOutputPort);
-                    }
-
-                    openNodeQueues.Clear();
-                    popped = false;
-                }
-
-                AddNewNode(startNode, StartNode.InputFieldName, StartNode.OutputFieldName);
-
-                int programCounter = 0;
-                foreach (Instruction instruction in node.Instructions)
-                {
-                    DebugInstruction(instruction, result.StringTable, programCounter);
 
                     switch (instruction.Opcode)
                     {
-                        case Instruction.Types.OpCode.RunLine:
-                            PopHandler();
-
-                            LineNode lineNode = CreateRunLineNode(instruction, result.StringTable);
-                            AddNewNode(lineNode, LineNode.InputFieldName, LineNode.OutputFieldName);
+                        case Instruction.Types.OpCode.JumpTo:
+                            programCounter = GetProgramCounterFromLabel(node.Labels, instruction.Operands[0].StringValue);
                             break;
-                        case Instruction.Types.OpCode.AddOption:
-                            if (currentOptionNode == null)
+                        case Instruction.Types.OpCode.RunLine:
+                            stringKey = instruction.Operands[0].StringValue;
+                            string actualText = result.StringTable[stringKey].text;
+
+                            if (TryAddNode(stringKey, out LineNode lineNode))
                             {
-                                currentOptionNode = ScriptableObject.CreateInstance<OptionNode>();
-                                AddNewNode(currentOptionNode, OptionNode.InputFieldName);
+                                // Parse text and look for character attribute and assign it to node if it's there
+                                MarkupParseResult markupParseResult = YarnUtility.ParseMarkup(actualText);
+                                if (markupParseResult.TryGetAttributeWithName("character", out MarkupAttribute characterNameAttribute))
+                                {
+                                    lineNode.Character = YarnUtility.GetPropertyStringValue(characterNameAttribute.Properties, "name", "");
+                                    lineNode.Text      = markupParseResult.DeleteRange(characterNameAttribute).Text;
+                                }
+                                else { lineNode.Text = markupParseResult.Text; }
+
+                                // Connect old output to new input
+                                currentOutput.Connect(lineNode.GetInputPort(LineNode.InputFieldName));
+                                currentOutput = lineNode.GetOutputPort(LineNode.OutputFieldName);
+                            }
+                            else // If line node already exists check if a merger already exists and create it if not
+                            {
+                                // Try to create a merger
+                                if (TryAddNode(stringKey + "_Merger", out LineNodeMerger lineNodeMerger))
+                                {
+                                    NodePort lineMergerOutput = lineNodeMerger.GetOutputPort(LineNodeMerger.OutputFieldName);
+
+                                    NodePort lineNodeInput      = lineNode.GetInputPort(LineNode.InputFieldName);
+                                    NodePort previousConnection = lineNodeInput.GetConnection(0);
+
+                                    // Connect merger to already existing line node (previous connection will automatically be disconnected)
+                                    lineMergerOutput.Connect(lineNodeInput);
+
+                                    // Connect the node that was previously connected to the line node to the  merger
+                                    previousConnection.Connect(lineNodeMerger.GetInputPort(LineNodeMerger.InputFieldName));
+                                }
+
+                                currentOutput.Connect(lineNodeMerger.GetInputPort(LineNodeMerger.InputFieldName));
+
+                                StopCurrentExecutionPath();
+                                break;
                             }
 
-                            string operandStringValue = YarnUtility.GetOperandStringValue(instruction.Operands);
-
-                            NodePort output = currentOptionNode.AddOption(result.StringTable[operandStringValue].text);
-
-                            nodeTreeStack.Peek().SubNodes.Push(new NodeTree(new List<XNode.Node>(), output));
-                            depth++;
+                            programCounter++;
                             break;
-                        case Instruction.Types.OpCode.JumpTo:
-                            NodeTree tree = nodeTreeStack.Pop();
-                            openNodeQueues.Add(tree);
-                            popped =  false;
-                            RemoveWidth(tree.Nodes.Count);
-                            depth--;
-                            break;
+                        case Instruction.Types.OpCode.AddOption:
+                            stringKey = instruction.Operands[0].StringValue;
 
+                            // Check if there's already an option node active
+                            if (currentOptionNode == null)
+                            {
+                                // Try to add a new option node
+                                if (TryAddNode(stringKey, out currentOptionNode)) { currentOutput.Connect(currentOptionNode.GetInputPort(OptionNode.InputFieldName)); }
+                                else // If the option node already exists end the current execution path and break out of the switch flow
+                                {
+                                    StopCurrentExecutionPath();
+                                    break;
+                                }
+                            }
+
+                            // Add new option to option node and add the resulting output port to the open paths stack
+                            NodePort dynamicOutput = currentOptionNode.AddOption(result.StringTable[stringKey].text);
+                            openPaths.Push(new OpenPath(dynamicOutput, instruction.Operands[1].StringValue));
+
+                            _nodeCursor.y++;
+                            programCounter++;
+                            break;
                         case Instruction.Types.OpCode.ShowOptions:
                             currentOptionNode = null;
-                            foreach (NodeTree subNode in nodeTreeStack.Peek().SubNodes) { nodeTreeStack.Push(subNode); }
 
+                            openPath = openPaths.Pop();
+
+                            currentOutput  = openPath.NodePort;
+                            programCounter = GetProgramCounterFromLabel(node.Labels, openPath.Label);
                             break;
-
-                        case Instruction.Types.OpCode.Pop:
-                            popped = true;
-                            break;
-
                         case Instruction.Types.OpCode.PushString:
-                            string jumpNode = YarnUtility.GetOperandStringValue(instruction.Operands);
-                            if (!jumpDictionary.ContainsKey(jumpNode)) { jumpDictionary.Add(jumpNode, new List<NodePort>()); }
-
-                            jumpDictionary[jumpNode].Add(nodeTreeStack.Peek().LastOutputPort);
+                            stringStack.Push(instruction.Operands[0].StringValue);
+                            programCounter++;
                             break;
-
+                        case Instruction.Types.OpCode.Pop:
+                            programCounter++;
+                            break;
                         case Instruction.Types.OpCode.Stop:
-                            PopHandler();
-                            EndNode endNode = ScriptableObject.CreateInstance<EndNode>();
-                            AddNewNode(endNode, EndNode.InputFieldName);
+                            TryAddNode("Stop_" + node.Name, out EndNode endNode);
+                            currentOutput.Connect(endNode.GetInputPort(EndNode.InputFieldName));
+
+                            StopCurrentExecutionPath();
+                            break;
+                        case Instruction.Types.OpCode.RunNode:
+                            string key = stringStack.Pop();
+                            if (!_jumpLookup.ContainsKey(key)) { _jumpLookup.Add(key, new List<NodePort>()); }
+
+                            _jumpLookup[key].Add(currentOutput);
+                            StopCurrentExecutionPath();
                             break;
                     }
 
-                    programCounter++;
+                    iterationLimit--;
                 }
 
-                nodeCount++;
+                if (iterationLimit == 0)
+                {
+                    throw new OverflowException("Iteration Limit has been reached! you are either trying to open an invalid yarn file or one that is too big!");
+                }
             }
 
-            return dialogueGraph;
+            return _dialogueGraph;
+        }
+
+        private void ResetState()
+        {
+            _nodeLookup.Clear();
+            _jumpLookup.Clear();
+            _nodeCursor    = Vector2.zero;
+            _dialogueGraph = null;
+        }
+
+        /// <summary>
+        /// This will try to add a new node with given string key
+        /// </summary>
+        /// <param name="stringKey">String key to create node with</param>
+        /// <param name="node">Will output either the newly created node or the existing one from the lookup table</param>
+        /// <typeparam name="T">A Node Type to search for</typeparam>
+        /// <returns>Returns true if the Node was added or false if the node was already found in the lookup</returns>
+        private bool TryAddNode<T>(string stringKey, out T node) where T : Node, new()
+        {
+            if (_nodeLookup.TryGetValue(stringKey, out Node lookupNode))
+            {
+                node = lookupNode as T;
+                return false;
+            }
+
+            node          = ScriptableObject.CreateInstance<T>();
+            node.position = _nodeCursor * Spacing;
+            _nodeLookup.Add(stringKey, node);
+            AddNodeToGraph(node);
+            _nodeCursor.x++;
+            return true;
+        }
+
+        private void AddNodeToGraph(Node node)
+        {
+            _dialogueGraph.nodes.Add(node);
+            Node.graphHotfix = _dialogueGraph;
+            node.graph       = _dialogueGraph;
+        }
+
+        private int GetProgramCounterFromLabel(MapField<string, int> labels, string label)
+        {
+            if (labels.TryGetValue(label, out int programCounter)) { return programCounter; }
+
+            throw new IndexOutOfRangeException($"Label {label} Does not exist!");
+        }
+
+        private class OpenPath
+        {
+            public OpenPath(NodePort nodePort, string label)
+            {
+                NodePort = nodePort;
+                Label    = label;
+            }
+
+            public NodePort NodePort { get; }
+            public string   Label    { get; }
         }
 
         private static CompilationResult CompileYarnFile(string path)
@@ -213,34 +268,14 @@ namespace SocksTool.Editor.CustomEditors.Builders
 
             return result;
         }
-
-        private static LineNode CreateRunLineNode(Instruction instruction, IDictionary<string, StringInfo> stringTable)
-        {
-            LineNode lineNode = ScriptableObject.CreateInstance<LineNode>();
-
-            string operandStringValue = YarnUtility.GetOperandStringValue(instruction.Operands);
-
-            MarkupParseResult markupParseResult = YarnUtility.ParseMarkup(stringTable[operandStringValue].text);
-
-            if (markupParseResult.TryGetAttributeWithName("character", out MarkupAttribute characterNameAttribute))
-            {
-                lineNode.Character = YarnUtility.GetPropertyStringValue(characterNameAttribute.Properties, "name", "");
-                lineNode.Text      = markupParseResult.DeleteRange(characterNameAttribute).Text;
-            }
-            else { lineNode.Text = markupParseResult.Text; }
-
-            return lineNode;
-        }
-
-        private static void DebugLabels(Node node)
+        
+        
+        private static void DebugLabels(Yarn.Node node)
         {
             Debug.Log("Labels:");
-            foreach ((string labelName, int instructionNumber) in node.Labels)
-            {
-                Debug.Log("- " + labelName + " at instruction " + instructionNumber);
-            }
+            foreach ((string labelName, int instructionNumber) in node.Labels) { Debug.Log("- " + labelName + " at instruction " + instructionNumber); }
         }
-        
+
         private static void DebugInstruction(Instruction instruction, IDictionary<string, StringInfo> stringTable, int count)
         {
             Debug.Log(count + " OP Code: " + instruction.Opcode);
