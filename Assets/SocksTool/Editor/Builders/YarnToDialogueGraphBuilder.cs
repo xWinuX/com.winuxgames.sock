@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using SocksTool.Runtime.NodeSystem.NodeGraphs;
 using SocksTool.Runtime.NodeSystem.Nodes;
-using SocksTool.Runtime.NodeSystem.Nodes.Core;
 using SocksTool.Runtime.NodeSystem.Utility;
 using SocksTool.Runtime.Utility;
 using UnityEngine;
@@ -13,7 +12,7 @@ using Yarn.Compiler;
 using Yarn.Markup;
 using Node = XNode.Node;
 
-namespace SocksTool.Editor.CustomEditors.Builders
+namespace SocksTool.Editor.Builders
 {
     public class YarnToDialogueGraphBuilder
     {
@@ -39,17 +38,16 @@ namespace SocksTool.Editor.CustomEditors.Builders
         public DialogueGraph Build(string yarnAssetPath)
         {
             ResetState();
-
-            CompilationResult result = CompileYarnFile(yarnAssetPath);
-
+           
             _dialogueGraph = ScriptableObject.CreateInstance<DialogueGraph>();
 
+            CompilationResult result = YarnUtility.CompileYarnFile(yarnAssetPath);
             foreach ((string _, Yarn.Node node) in result.Program.Nodes)
             {
-                StringInfo nodeStringInfo = new StringInfo
-                {
-                    metadata = node.Tags.ToArray()
-                };
+                DebugLabels(node);
+
+                // Convert node metadata to string info for easier tag usage
+                StringInfo nodeStringInfo = new StringInfo { metadata = node.Tags.ToArray() };
 
                 // Add and setup start node
                 TryAddNode("Start_" + node.Name, out StartNode startNode, nodeStringInfo, SockTag.SockStartNodePositionTag);
@@ -80,10 +78,12 @@ namespace SocksTool.Editor.CustomEditors.Builders
                 int  iterationLimit = IterationLimit;
                 while (iterationLimit > 0 && !stop)
                 {
-                    Instruction instruction = node.Instructions[programCounter];
-
+                    Instruction  instruction = node.Instructions[programCounter];
                     OpenPathInfo openPathInfo;
 
+                    DebugInstruction(instruction, result.StringTable, programCounter);
+                    
+                    
                     // Stops current execution path and checks if another can be started, if not end loop
                     void StopCurrentExecutionPath()
                     {
@@ -138,17 +138,14 @@ namespace SocksTool.Editor.CustomEditors.Builders
                                     {
                                         lineNodeMerger.position = GetNodePositionFromStringInfo(lineNodeStringInfo, SockTag.SockLineMergerNodePositionTag);
                                     }
-                                  
                                     
-
                                     // Connect merger to already existing line node (previous connection will automatically be disconnected)
                                     lineMergerOutput.Connect(lineNodeInput);
 
                                     // Connect the node that was previously connected to the line node to the  merger
                                     previousConnection.Connect(lineNodeMerger.GetInputPort(LineNodeMerger.InputFieldName));
                                 }
-
-
+                                
                                 currentOutput.Connect(lineNodeMerger.GetInputPort(LineNodeMerger.InputFieldName));
 
                                 StopCurrentExecutionPath();
@@ -211,6 +208,9 @@ namespace SocksTool.Editor.CustomEditors.Builders
                             _jumpLookup[key].Add(currentOutput);
                             StopCurrentExecutionPath();
                             break;
+                        default:
+                            programCounter++;
+                            break;
                     }
 
                     iterationLimit--;
@@ -255,7 +255,7 @@ namespace SocksTool.Editor.CustomEditors.Builders
             node.position = GetNodePositionFromStringInfo(stringInfo, positionTagFilter);
 
             _nodeStringInfoLookup.Add(node, stringInfo);
-            
+
             _nodeLookup.Add(stringKey, node);
             AddNodeToGraph(node);
 
@@ -314,22 +314,6 @@ namespace SocksTool.Editor.CustomEditors.Builders
 
             public NodePort NodePort { get; }
             public string   Label    { get; }
-        }
-
-        private static CompilationResult CompileYarnFile(string path)
-        {
-            CompilationJob compilationJob = CompilationJob.CreateFromFiles(path);
-
-            CompilationResult result;
-            try { result = Compiler.Compile(compilationJob); }
-            catch (Exception e)
-            {
-                Debug.LogError(e);
-                Debug.LogError("Failed to compile Yarn Script: " + path);
-                throw;
-            }
-
-            return result;
         }
 
 

@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 using Yarn;
+using Yarn.Compiler;
 using Yarn.Markup;
 
 namespace SocksTool.Runtime.Utility
@@ -32,6 +35,34 @@ namespace SocksTool.Runtime.Utility
             }
 
             return string.Empty;
+        }
+
+        public static CompilationResult CompileYarnFile(string path)
+        {
+            CompilationJob compilationJob = CompilationJob.CreateFromFiles(path);
+
+            return CompileYarn(compilationJob);
+        }
+
+        public static CompilationResult CompileYarnString(string yarnString)
+        {
+            CompilationJob compilationJob = CompilationJob.CreateFromString("preview", yarnString);
+
+            return CompileYarn(compilationJob);
+        }
+
+        private static CompilationResult CompileYarn(CompilationJob compilationJob)
+        {
+            CompilationResult result;
+            try { result = Compiler.Compile(compilationJob); }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+                Debug.LogError("Failed to compile Yarn Script!");
+                throw;
+            }
+
+            return result;
         }
     }
 }

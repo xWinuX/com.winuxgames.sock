@@ -23,6 +23,8 @@ namespace SocksTool.Runtime.NodeSystem.Nodes
         
         public override void OnCreateConnection(NodePort from, NodePort to)
         {
+            base.OnCreateConnection(from, to);
+            
             NodeInfo nodeInfo = GetInputValue<NodeInfo>(InputFieldName);
             if (StartNode == null)
             {

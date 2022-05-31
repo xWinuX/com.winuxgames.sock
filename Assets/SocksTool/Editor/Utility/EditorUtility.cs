@@ -7,7 +7,7 @@ namespace SocksTool.Editor.Utility
     public static class EditorUtility
     {
         public static string AssetPath => "Assets/_" + GetProjectName();
-        
+
         public static string GetProjectName()
         {
             string[] split       = Application.dataPath.Split('/');

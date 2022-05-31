@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Text;
 using XNode;
+using Yarn.Unity;
 
 namespace SocksTool.Runtime.NodeSystem.Nodes.Core
 {
@@ -26,6 +27,13 @@ namespace SocksTool.Runtime.NodeSystem.Nodes.Core
             if (nodeInfo.StartNode == null) { return "Error"; }
 
             return nodeInfo.StartNode.Title + " " + nodeInfo.Indent + " " + nodeInfo.Count + " " + nodeInfo.Offset;
+        }
+
+
+        public override void OnCreateConnection(NodePort from, NodePort to)
+        {
+            // Avoid self connecting
+            if (from.node.Equals(to.node)) { from.Disconnect(to); }
         }
 
         protected virtual int GetIndent()

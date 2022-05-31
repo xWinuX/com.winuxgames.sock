@@ -8,7 +8,7 @@ using SocksTool.Runtime.NodeSystem.Utility;
 using UnityEngine;
 using XNode;
 
-namespace SocksTool.Editor.CustomEditors.Builders
+namespace SocksTool.Editor.Builders
 {
     public static class DialogueGraphToYarnBuilder
     {
@@ -50,7 +50,7 @@ namespace SocksTool.Editor.CustomEditors.Builders
                 SockNode currentNode  = null;
                 NodePort output       = startNode.GetOutputPort(StartNode.OutputFieldName);
                 NodePort connectedTo  = output.GetConnection(0);
-                bool     isLastInPath = false;
+                bool     isLastInPath = true;
 
                 void Pop()
                 {
@@ -82,6 +82,7 @@ namespace SocksTool.Editor.CustomEditors.Builders
                                 LineNodeMerger lineNodeMerger      = connectedToLineNode as LineNodeMerger;
                                 if (lineNodeMerger != null)
                                 {
+                                    Debug.Log("linemerger");
                                     string s = sb.ToString().TrimEnd();
                                     sb.Clear();
                                     sb.Append(s);
