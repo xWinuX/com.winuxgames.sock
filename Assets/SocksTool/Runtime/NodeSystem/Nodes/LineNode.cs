@@ -7,7 +7,7 @@ using XNode;
 namespace SocksTool.Runtime.NodeSystem.Nodes
 {
     [NodeWidth(300)]
-    [CreateNodeMenu("Dialogue/Line")]
+    [CreateNodeMenu("Dialogue/Line", 0)]
     public class LineNode : SingleInputNode
     {
         public const string OutputFieldName = nameof(_out);

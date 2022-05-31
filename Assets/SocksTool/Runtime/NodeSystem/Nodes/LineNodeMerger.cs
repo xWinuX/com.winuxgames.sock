@@ -7,14 +7,10 @@ using XNode;
 namespace SocksTool.Runtime.NodeSystem.Nodes
 {
     [NodeWidth(150)]
-    [CreateNodeMenu("Dialogue/Line Node Merger")]
-    public class LineNodeMerger : SockNode
+    [CreateNodeMenu("Dialogue/Line Node Merger", 2)]
+    public class LineNodeMerger : MultiInputNode
     {
         public const string OutputFieldName = nameof(_out);
-        
-        [SerializeField]
-        [Input(typeConstraint = TypeConstraint.Strict, connectionType = ConnectionType.Multiple)]
-        private NodeInfo _in;
         
         [SerializeField]
         [Output(typeConstraint = TypeConstraint.Strict, connectionType = ConnectionType.Override)]

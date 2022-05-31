@@ -8,7 +8,7 @@ using XNode;
 namespace SocksTool.Runtime.NodeSystem.Nodes
 {
     [NodeWidth(300)]
-    [CreateNodeMenu("Dialogue/Option")]
+    [CreateNodeMenu("Dialogue/Option", 1)]
     public class OptionNode : SingleInputNode
     {
         public const string OutputFieldName = nameof(_outputList);

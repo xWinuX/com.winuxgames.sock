@@ -1,7 +1,6 @@
 ﻿using System.Globalization;
 using System.Text;
 using XNode;
-using Yarn.Unity;
 
 namespace SocksTool.Runtime.NodeSystem.Nodes.Core
 {

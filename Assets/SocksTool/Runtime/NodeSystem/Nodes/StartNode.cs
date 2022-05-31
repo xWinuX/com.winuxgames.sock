@@ -8,7 +8,7 @@ using XNode;
 namespace SocksTool.Runtime.NodeSystem.Nodes
 {
     [NodeWidth(300)]
-    [CreateNodeMenu("Dialogue/Start Node")]
+    [CreateNodeMenu("Dialogue/Start Node", 3)]
     public class StartNode : MultiInputNode
     {
         public const string OutputFieldName = nameof(_out);
@@ -24,8 +24,8 @@ namespace SocksTool.Runtime.NodeSystem.Nodes
 
         public override string Name => "Start Node";
 
-        public string       Title   { get => _title; set => _title = value; }
-        public List<string> Tags    => _tags;
+        public List<string> Tags  => _tags;
+        public string       Title { get => _title; set => _title = value; }
         
         public override object GetValue(NodePort port) => new NodeInfo(this, 0, 0, 0);
 

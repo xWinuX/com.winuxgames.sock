@@ -81,7 +81,7 @@ namespace SocksTool.Editor.Builders
                             // Add line merger tag if sock tags are included
                             if (includeSockTags)
                             {
-                                NodePort       lineNodeInput       = lineNode.GetInputPort(LineNode.InputFieldName);
+                                NodePort       lineNodeInput       = lineNode.GetInputPort(SockNode.InputFieldName);
                                 Node           connectedToLineNode = lineNodeInput.GetConnection(0).node;
                                 LineNodeMerger lineNodeMerger      = connectedToLineNode as LineNodeMerger;
                                 if (lineNodeMerger != null)
