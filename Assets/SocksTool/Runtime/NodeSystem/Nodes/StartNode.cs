@@ -25,7 +25,6 @@ namespace SocksTool.Runtime.NodeSystem.Nodes
         public override string Name => "Start Node";
 
         public string       Title   { get => _title; set => _title = value; }
-        public EndNode      EndNode { get;           set; }
         public List<string> Tags    => _tags;
         
         public override object GetValue(NodePort port) => new NodeInfo(this, 0, 0, 0);
@@ -50,10 +49,6 @@ namespace SocksTool.Runtime.NodeSystem.Nodes
             {
                 sb.Append(SockTag.SockStartNodePositionTag).Append(':');
                 GetPositionString(sb);
-                sb.Append(' ');
-                
-                sb.Append(SockTag.SockEndNodePositionTag).Append(':');
-                EndNode.GetPositionString(sb);
                 sb.Append(' ');
             }
             

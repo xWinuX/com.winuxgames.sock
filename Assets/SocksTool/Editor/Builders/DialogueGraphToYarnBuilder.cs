@@ -35,13 +35,6 @@ namespace SocksTool.Editor.Builders
             List<StartNode>     startNodes    = dialogueGraph.nodes.OfType<StartNode>().ToList();
             Stack<OpenPathInfo> openPathStack = new Stack<OpenPathInfo>();
 
-            if (startNodes.Count(sn => sn.EndNode == null) != 0)
-            {
-                Debug.LogError("Parsing nodes back to yarn failed!");
-                Debug.LogError("Some node paths are not closed!");
-                return string.Empty;
-            }
-
             // Cache
             List<NodePort> dynamicOutputs = new List<NodePort>();
             foreach (StartNode startNode in startNodes)
@@ -52,9 +45,15 @@ namespace SocksTool.Editor.Builders
                 NodePort connectedTo  = output.GetConnection(0);
                 bool     isLastInPath = true;
 
+                bool stop             = false;
+                
                 void Pop()
                 {
-                    if (!openPathStack.TryPop(out OpenPathInfo info)) { return; }
+                    if (!openPathStack.TryPop(out OpenPathInfo info))
+                    {
+                        stop = true;
+                        return;
+                    }
 
                     info.Node.GetText(sb, info.Index, includeSockTags);
 
@@ -62,16 +61,21 @@ namespace SocksTool.Editor.Builders
                     connectedTo  = info.NodePort;
                     isLastInPath = info.LastInPath;
                 }
-
-                int  iterationLimiter = 1000;
-                bool stop             = false;
-                while (connectedTo != null && iterationLimiter > 0 && !stop)
+                
+                int iterationLimiter = 1000;
+                while (iterationLimiter > 0 && !stop)
                 {
                     switch (connectedTo.node)
                     {
                         case LineNode lineNode:
                         {
                             lineNode.GetText(sb, 0, includeSockTags);
+                            NodePort lineNodeOutput = lineNode.GetOutputPort(LineNode.OutputFieldName);
+                            if (lineNodeOutput.ConnectionCount == 0)
+                            {
+                                Pop();
+                                break;
+                            }
                             connectedTo = lineNode.GetOutputPort(LineNode.OutputFieldName).GetConnection(0);
 
                             // Add line merger tag if sock tags are included
@@ -82,7 +86,6 @@ namespace SocksTool.Editor.Builders
                                 LineNodeMerger lineNodeMerger      = connectedToLineNode as LineNodeMerger;
                                 if (lineNodeMerger != null)
                                 {
-                                    Debug.Log("linemerger");
                                     string s = sb.ToString().TrimEnd();
                                     sb.Clear();
                                     sb.Append(s);
@@ -122,17 +125,6 @@ namespace SocksTool.Editor.Builders
                             break;
                         }
 
-                        case EndNode endNode:
-                            if (!isLastInPath)
-                            {
-                                Pop();
-                                break;
-                            }
-
-                            endNode.GetText(sb, 0, includeSockTags);
-                            stop = true;
-                            break;
-
                         case StartNode sNode:
                             if (currentNode != null) { currentNode.AddIndent(sb, 1); }
 
@@ -147,6 +139,11 @@ namespace SocksTool.Editor.Builders
                     Debug.Log(iterationLimiter);
                     iterationLimiter--;
                 }
+                
+                // Close Node
+                sb.Append("===");
+                sb.AppendLine();
+                sb.AppendLine();
             }
 
             return sb.ToString();

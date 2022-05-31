@@ -196,8 +196,8 @@ namespace SocksTool.Editor.Builders
                             programCounter++;
                             break;
                         case Instruction.Types.OpCode.Stop:
-                            TryAddNode("Stop_" + node.Name, out EndNode endNode, nodeStringInfo, SockTag.SockEndNodePositionTag);
-                            currentOutput.Connect(endNode.GetInputPort(EndNode.InputFieldName));
+                           // TryAddNode("Stop_" + node.Name, out EndNode endNode, nodeStringInfo, SockTag.SockEndNodePositionTag);
+                           // currentOutput.Connect(endNode.GetInputPort(EndNode.InputFieldName));
 
                             StopCurrentExecutionPath();
                             break;

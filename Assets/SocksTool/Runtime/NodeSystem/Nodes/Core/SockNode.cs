@@ -50,12 +50,12 @@ namespace SocksTool.Runtime.NodeSystem.Nodes.Core
             name = Name;
         }
 
-        public void GetPositionString(StringBuilder sb)
+        protected void GetPositionString(StringBuilder sb)
         {
             sb.Append(position.x.ToString(CultureInfo.InvariantCulture)).Append(',').Append(position.y.ToString(CultureInfo.InvariantCulture));
         }
 
-        public virtual void AddPositionTag(StringBuilder sb, string tag)
+        public void AddPositionTag(StringBuilder sb, string tag)
         {
             sb.Append(" #").Append(tag).Append(':');
             GetPositionString(sb);
