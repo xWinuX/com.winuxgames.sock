@@ -6,9 +6,9 @@ using XNode;
 
 namespace SocksTool.Runtime.NodeSystem.Nodes
 {
-    [NodeWidth(150)]
-    [CreateNodeMenu("Dialogue/Line Node Merger", 2)]
-    public class LineNodeMerger : MultiInputNode
+    [NodeWidth(100)]
+    [CreateNodeMenu("Dialogue/Line Merger", 2)]
+    public class LineMergerNode : MultiInputNode
     {
         public const string OutputFieldName = nameof(_out);
         
@@ -16,7 +16,7 @@ namespace SocksTool.Runtime.NodeSystem.Nodes
         [Output(typeConstraint = TypeConstraint.Strict, connectionType = ConnectionType.Override)]
         private NodeInfo _out;
 
-        public override string Name => "Line Node Merger";
+        public override string Name => "Line Merger";
 
         public override void GetText(StringBuilder sb, int index = 0, bool includeSockTags = true) { }
 

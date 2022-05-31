@@ -15,14 +15,9 @@ namespace SocksTool.Editor.CustomEditors.Nodes
 
             serializedObject.Update();
 
-            if (TargetNode != null)
-            {
-                GUILayout.Label(TargetNode.GetName());
-                
-                DrawNode();
+            if (TargetNode != null) { DrawNode(); }
 
-                serializedObject.ApplyModifiedProperties();
-            }
+            serializedObject.ApplyModifiedProperties();
         }
 
         protected virtual void DrawNode() { DrawInputNodePort(); }

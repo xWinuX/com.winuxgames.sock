@@ -85,13 +85,13 @@ namespace SocksTool.Editor.Builders
                             {
                                 NodePort       lineNodeInput       = lineNode.GetInputPort(SockNode.InputFieldName);
                                 Node           connectedToLineNode = lineNodeInput.GetConnection(0).node;
-                                LineNodeMerger lineNodeMerger      = connectedToLineNode as LineNodeMerger;
-                                if (lineNodeMerger != null)
+                                LineMergerNode lineMergerNode      = connectedToLineNode as LineMergerNode;
+                                if (lineMergerNode != null)
                                 {
                                     string s = sb.ToString().TrimEnd();
                                     sb.Clear();
                                     sb.Append(s);
-                                    lineNodeMerger.AddPositionTag(sb, SockTag.SockLineMergerNodePositionTag);
+                                    lineMergerNode.AddPositionTag(sb, SockTag.SockLineMergerNodePositionTag);
                                     sb.AppendLine();
                                 }
                             }
@@ -115,11 +115,11 @@ namespace SocksTool.Editor.Builders
                             break;
                         }
 
-                        case LineNodeMerger lineNodeMerger:
+                        case LineMergerNode lineNodeMerger:
                         {
                             if (isLastInPath)
                             {
-                                NodePort connectedToPort = lineNodeMerger.GetOutputPort(LineNodeMerger.OutputFieldName).GetConnection(0);
+                                NodePort connectedToPort = lineNodeMerger.GetOutputPort(LineMergerNode.OutputFieldName).GetConnection(0);
                                 openPathStack.Push(new OpenPathInfo(lineNodeMerger, connectedToPort, 0, true));
                             }
 

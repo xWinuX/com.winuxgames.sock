@@ -127,9 +127,9 @@ namespace SocksTool.Editor.Builders
                             else // If line node already exists check if a merger already exists and create it if not
                             {
                                 // Try to create a merger
-                                if (TryAddNode(stringKey + "_Merger", out LineNodeMerger lineNodeMerger))
+                                if (TryAddNode(stringKey + "_Merger", out LineMergerNode lineNodeMerger))
                                 {
-                                    NodePort lineMergerOutput   = lineNodeMerger.GetOutputPort(LineNodeMerger.OutputFieldName);
+                                    NodePort lineMergerOutput   = lineNodeMerger.GetOutputPort(LineMergerNode.OutputFieldName);
                                     NodePort lineNodeInput      = lineNode.GetInputPort(SockNode.InputFieldName);
                                     NodePort previousConnection = lineNodeInput.GetConnection(0);
 

@@ -7,14 +7,14 @@ using XNodeEditor;
 
 namespace SocksTool.Editor.CustomEditors.Nodes
 {
-    [CustomNodeEditor(typeof(LineNodeMerger))]
-    public class LineNodeMergerEditor : SockNodeEditor<LineNodeMerger>
+    [CustomNodeEditor(typeof(LineMergerNode))]
+    public class LineMergerNodeEditor : SockNodeEditor<LineMergerNode>
     {
         protected override void DrawNode()
         {
             EditorGUILayout.BeginHorizontal();
             DrawInputNodePort();
-            NodeEditorGUILayout.PortField(new GUIContent(""), TargetNode.GetOutputPort(LineNodeMerger.OutputFieldName), GUILayout.MinWidth(0));
+            NodeEditorGUILayout.PortField(new GUIContent(""), TargetNode.GetOutputPort(LineMergerNode.OutputFieldName), GUILayout.MinWidth(0));
             EditorGUILayout.EndHorizontal();
         }
         
