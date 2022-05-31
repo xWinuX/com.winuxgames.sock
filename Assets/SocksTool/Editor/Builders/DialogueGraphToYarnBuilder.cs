@@ -51,7 +51,7 @@ namespace SocksTool.Editor.Builders
                 {
                     if (!openPathStack.TryPop(out OpenPathInfo info))
                     {
-                        stop = true;
+                        stop = true; // If the stack is empty stop the loop
                         return;
                     }
 
@@ -71,6 +71,8 @@ namespace SocksTool.Editor.Builders
                         {
                             lineNode.GetText(sb, 0, includeSockTags);
                             NodePort lineNodeOutput = lineNode.GetOutputPort(LineNode.OutputFieldName);
+                            
+                            // If this node has no output connection go to the next open path
                             if (lineNodeOutput.ConnectionCount == 0)
                             {
                                 Pop();

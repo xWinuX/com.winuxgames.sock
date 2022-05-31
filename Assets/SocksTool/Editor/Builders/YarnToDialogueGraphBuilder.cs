@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using SocksTool.Runtime.NodeSystem.NodeGraphs;
 using SocksTool.Runtime.NodeSystem.Nodes;
+using SocksTool.Runtime.NodeSystem.Nodes.Core;
 using SocksTool.Runtime.NodeSystem.Utility;
 using SocksTool.Runtime.Utility;
 using UnityEngine;
@@ -120,7 +121,7 @@ namespace SocksTool.Editor.Builders
                                 else { lineNode.Text = markupParseResult.Text; }
 
                                 // Connect old output to new input
-                                currentOutput.Connect(lineNode.GetInputPort(LineNode.InputFieldName));
+                                currentOutput.Connect(lineNode.GetInputPort(SockNode.InputFieldName));
                                 currentOutput = lineNode.GetOutputPort(LineNode.OutputFieldName);
                             }
                             else // If line node already exists check if a merger already exists and create it if not
@@ -128,9 +129,8 @@ namespace SocksTool.Editor.Builders
                                 // Try to create a merger
                                 if (TryAddNode(stringKey + "_Merger", out LineNodeMerger lineNodeMerger))
                                 {
-                                    NodePort lineMergerOutput = lineNodeMerger.GetOutputPort(LineNodeMerger.OutputFieldName);
-
-                                    NodePort lineNodeInput      = lineNode.GetInputPort(LineNode.InputFieldName);
+                                    NodePort lineMergerOutput   = lineNodeMerger.GetOutputPort(LineNodeMerger.OutputFieldName);
+                                    NodePort lineNodeInput      = lineNode.GetInputPort(SockNode.InputFieldName);
                                     NodePort previousConnection = lineNodeInput.GetConnection(0);
 
                                     // Get position from line node if it has the corresponding tag
@@ -143,10 +143,10 @@ namespace SocksTool.Editor.Builders
                                     lineMergerOutput.Connect(lineNodeInput);
 
                                     // Connect the node that was previously connected to the line node to the  merger
-                                    previousConnection.Connect(lineNodeMerger.GetInputPort(LineNodeMerger.InputFieldName));
+                                    previousConnection.Connect(lineNodeMerger.GetInputPort(SockNode.InputFieldName));
                                 }
                                 
-                                currentOutput.Connect(lineNodeMerger.GetInputPort(LineNodeMerger.InputFieldName));
+                                currentOutput.Connect(lineNodeMerger.GetInputPort(SockNode.InputFieldName));
 
                                 StopCurrentExecutionPath();
                                 break;
@@ -312,8 +312,7 @@ namespace SocksTool.Editor.Builders
             public NodePort NodePort { get; }
             public string   Label    { get; }
         }
-
-
+        
         private static void DebugLabels(Yarn.Node node)
         {
             Debug.Log("Labels:");

@@ -6,6 +6,5 @@
         public const string SockPositionTag               = SockTagPrefix + "POSITION";
         public const string SockLineMergerNodePositionTag = SockTagPrefix + "POSITION_LINE-MERGER-NODE";
         public const string SockStartNodePositionTag      = SockTagPrefix + "POSITION_START-NODE";
-        public const string SockEndNodePositionTag        = SockTagPrefix + "POSITION_END-NODE";
     }
 }
