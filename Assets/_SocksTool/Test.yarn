@@ -1,5 +1,5 @@
 ﻿title: Test
-tags:
+tags: 
 ---
 Character: This is a Test, everything[wait=0.5/] should[wait=0.5/] be[wait=0.5/] working[wait=0.5/] now
 Character: And Questions!
@@ -19,9 +19,8 @@ Character: And Questions!
 OtherCharacter: And this text will always appear after the options are done!
 ===
 
-
 title: AnswerNode
-tags:
+tags: 
 ---
 This is the answer Node
 -> Option 1

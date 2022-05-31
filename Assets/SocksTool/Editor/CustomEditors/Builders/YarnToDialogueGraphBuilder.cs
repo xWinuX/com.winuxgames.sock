@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using Google.Protobuf.Collections;
+using System.Linq;
 using SocksTool.Runtime.NodeSystem.NodeGraphs;
 using SocksTool.Runtime.NodeSystem.Nodes;
+using SocksTool.Runtime.NodeSystem.Nodes.Core;
+using SocksTool.Runtime.NodeSystem.Utility;
 using SocksTool.Runtime.Utility;
 using UnityEngine;
 using XNode;
@@ -10,7 +12,6 @@ using Yarn;
 using Yarn.Compiler;
 using Yarn.Markup;
 using Node = XNode.Node;
-
 
 namespace SocksTool.Editor.CustomEditors.Builders
 {
@@ -23,8 +24,9 @@ namespace SocksTool.Editor.CustomEditors.Builders
         /// </summary>
         public Vector2 Spacing { get; set; } = new Vector2(350, 150);
 
-        private readonly Dictionary<string, Node>           _nodeLookup = new Dictionary<string, Node>();
-        private readonly Dictionary<string, List<NodePort>> _jumpLookup = new Dictionary<string, List<NodePort>>();
+        private readonly Dictionary<string, Node>           _nodeLookup           = new Dictionary<string, Node>();
+        private readonly Dictionary<string, List<NodePort>> _jumpLookup           = new Dictionary<string, List<NodePort>>();
+        private readonly Dictionary<Node, StringInfo>       _nodeStringInfoLookup = new Dictionary<Node, StringInfo>();
         private          DialogueGraph                      _dialogueGraph;
         private          Vector2                            _nodeCursor;
 
@@ -44,9 +46,22 @@ namespace SocksTool.Editor.CustomEditors.Builders
 
             foreach ((string _, Yarn.Node node) in result.Program.Nodes)
             {
+                StringInfo nodeStringInfo = new StringInfo
+                {
+                    metadata = node.Tags.ToArray()
+                };
+
                 // Add and setup start node
-                TryAddNode("Start_" + node.Name, out StartNode startNode);
+                TryAddNode("Start_" + node.Name, out StartNode startNode, nodeStringInfo, SockTag.SockStartNodePositionTag);
                 startNode.Title = node.Name;
+
+                // Add tags to start node
+                foreach (string tag in node.Tags)
+                {
+                    if (tag.StartsWith(SockTag.SockTagPrefix)) { continue; }
+
+                    startNode.Tags.Add(tag);
+                }
 
                 // Are there any outputs waiting for this node, if yes connect them to it
                 if (_jumpLookup.TryGetValue(node.Name, out List<NodePort> jumpOutputs))
@@ -55,10 +70,10 @@ namespace SocksTool.Editor.CustomEditors.Builders
                     foreach (NodePort jumpOutput in jumpOutputs) { jumpOutput.Connect(startNodeInput); }
                 }
 
-                Stack<string>   stringStack       = new Stack<string>();
-                Stack<OpenPath> openPaths         = new Stack<OpenPath>();
-                OptionNode      currentOptionNode = null;
-                NodePort        currentOutput     = startNode.GetOutputPort(StartNode.OutputFieldName);
+                Stack<string>       stringStack       = new Stack<string>();
+                Stack<OpenPathInfo> openPaths         = new Stack<OpenPathInfo>();
+                OptionNode          currentOptionNode = null;
+                NodePort            currentOutput     = startNode.GetOutputPort(StartNode.OutputFieldName);
 
                 bool stop           = false;
                 int  programCounter = 0;
@@ -67,18 +82,17 @@ namespace SocksTool.Editor.CustomEditors.Builders
                 {
                     Instruction instruction = node.Instructions[programCounter];
 
-                    string   stringKey;
-                    OpenPath openPath;
+                    OpenPathInfo openPathInfo;
 
                     // Stops current execution path and checks if another can be started, if not end loop
                     void StopCurrentExecutionPath()
                     {
                         if (openPaths.Count > 0)
                         {
-                            openPath = openPaths.Pop();
+                            openPathInfo = openPaths.Pop();
 
-                            currentOutput  = openPath.NodePort;
-                            programCounter = GetProgramCounterFromLabel(node.Labels, openPath.Label);
+                            currentOutput  = openPathInfo.NodePort;
+                            programCounter = GetProgramCounterFromLabel(node.Labels, openPathInfo.Label);
                         }
                         else { stop = true; }
                     }
@@ -89,17 +103,19 @@ namespace SocksTool.Editor.CustomEditors.Builders
                             programCounter = GetProgramCounterFromLabel(node.Labels, instruction.Operands[0].StringValue);
                             break;
                         case Instruction.Types.OpCode.RunLine:
-                            stringKey = instruction.Operands[0].StringValue;
-                            string actualText = result.StringTable[stringKey].text;
-
-                            if (TryAddNode(stringKey, out LineNode lineNode))
+                        {
+                            string     stringKey  = instruction.Operands[0].StringValue;
+                            StringInfo stringInfo = result.StringTable[stringKey];
+                            string     actualText = stringInfo.text;
+                            GetNodePositionFromStringInfo(stringInfo);
+                            if (TryAddNode(stringKey, out LineNode lineNode, stringInfo))
                             {
                                 // Parse text and look for character attribute and assign it to node if it's there
                                 MarkupParseResult markupParseResult = YarnUtility.ParseMarkup(actualText);
                                 if (markupParseResult.TryGetAttributeWithName("character", out MarkupAttribute characterNameAttribute))
                                 {
-                                    lineNode.Character = YarnUtility.GetPropertyStringValue(characterNameAttribute.Properties, "name", "");
-                                    lineNode.Text      = markupParseResult.DeleteRange(characterNameAttribute).Text;
+                                    lineNode.Character = YarnUtility.GetPropertyStringValue(characterNameAttribute.Properties, "name");
+                                    lineNode.Text      = actualText.Remove(characterNameAttribute.Position, characterNameAttribute.Length);
                                 }
                                 else { lineNode.Text = markupParseResult.Text; }
 
@@ -117,12 +133,21 @@ namespace SocksTool.Editor.CustomEditors.Builders
                                     NodePort lineNodeInput      = lineNode.GetInputPort(LineNode.InputFieldName);
                                     NodePort previousConnection = lineNodeInput.GetConnection(0);
 
+                                    // Get position from line node if it has the corresponding tag
+                                    if (_nodeStringInfoLookup.TryGetValue(lineNodeInput.node, out StringInfo lineNodeStringInfo))
+                                    {
+                                        lineNodeMerger.position = GetNodePositionFromStringInfo(lineNodeStringInfo, SockTag.SockLineMergerNodePositionTag);
+                                    }
+                                  
+                                    
+
                                     // Connect merger to already existing line node (previous connection will automatically be disconnected)
                                     lineMergerOutput.Connect(lineNodeInput);
 
                                     // Connect the node that was previously connected to the line node to the  merger
                                     previousConnection.Connect(lineNodeMerger.GetInputPort(LineNodeMerger.InputFieldName));
                                 }
+
 
                                 currentOutput.Connect(lineNodeMerger.GetInputPort(LineNodeMerger.InputFieldName));
 
@@ -132,14 +157,17 @@ namespace SocksTool.Editor.CustomEditors.Builders
 
                             programCounter++;
                             break;
+                        }
                         case Instruction.Types.OpCode.AddOption:
-                            stringKey = instruction.Operands[0].StringValue;
+                        {
+                            string     stringKey  = instruction.Operands[0].StringValue;
+                            StringInfo stringInfo = result.StringTable[stringKey];
 
                             // Check if there's already an option node active
                             if (currentOptionNode == null)
                             {
                                 // Try to add a new option node
-                                if (TryAddNode(stringKey, out currentOptionNode)) { currentOutput.Connect(currentOptionNode.GetInputPort(OptionNode.InputFieldName)); }
+                                if (TryAddNode(stringKey, out currentOptionNode, stringInfo)) { currentOutput.Connect(currentOptionNode.GetInputPort(OptionNode.InputFieldName)); }
                                 else // If the option node already exists end the current execution path and break out of the switch flow
                                 {
                                     StopCurrentExecutionPath();
@@ -148,19 +176,20 @@ namespace SocksTool.Editor.CustomEditors.Builders
                             }
 
                             // Add new option to option node and add the resulting output port to the open paths stack
-                            NodePort dynamicOutput = currentOptionNode.AddOption(result.StringTable[stringKey].text);
-                            openPaths.Push(new OpenPath(dynamicOutput, instruction.Operands[1].StringValue));
+                            NodePort dynamicOutput = currentOptionNode.AddOption(stringInfo.text);
+                            openPaths.Push(new OpenPathInfo(dynamicOutput, instruction.Operands[1].StringValue));
 
                             _nodeCursor.y++;
                             programCounter++;
                             break;
+                        }
                         case Instruction.Types.OpCode.ShowOptions:
                             currentOptionNode = null;
 
-                            openPath = openPaths.Pop();
+                            openPathInfo = openPaths.Pop();
 
-                            currentOutput  = openPath.NodePort;
-                            programCounter = GetProgramCounterFromLabel(node.Labels, openPath.Label);
+                            currentOutput  = openPathInfo.NodePort;
+                            programCounter = GetProgramCounterFromLabel(node.Labels, openPathInfo.Label);
                             break;
                         case Instruction.Types.OpCode.PushString:
                             stringStack.Push(instruction.Operands[0].StringValue);
@@ -170,7 +199,7 @@ namespace SocksTool.Editor.CustomEditors.Builders
                             programCounter++;
                             break;
                         case Instruction.Types.OpCode.Stop:
-                            TryAddNode("Stop_" + node.Name, out EndNode endNode);
+                            TryAddNode("Stop_" + node.Name, out EndNode endNode, nodeStringInfo, SockTag.SockEndNodePositionTag);
                             currentOutput.Connect(endNode.GetInputPort(EndNode.InputFieldName));
 
                             StopCurrentExecutionPath();
@@ -200,6 +229,7 @@ namespace SocksTool.Editor.CustomEditors.Builders
         {
             _nodeLookup.Clear();
             _jumpLookup.Clear();
+            _nodeStringInfoLookup.Clear();
             _nodeCursor    = Vector2.zero;
             _dialogueGraph = null;
         }
@@ -209,9 +239,11 @@ namespace SocksTool.Editor.CustomEditors.Builders
         /// </summary>
         /// <param name="stringKey">String key to create node with</param>
         /// <param name="node">Will output either the newly created node or the existing one from the lookup table</param>
+        /// <param name="stringInfo">String info of current node, default is the default struct</param>
+        /// <param name="positionTagFilter">Tag filter for position</param>
         /// <typeparam name="T">A Node Type to search for</typeparam>
         /// <returns>Returns true if the Node was added or false if the node was already found in the lookup</returns>
-        private bool TryAddNode<T>(string stringKey, out T node) where T : Node, new()
+        private bool TryAddNode<T>(string stringKey, out T node, StringInfo stringInfo = default, string positionTagFilter = SockTag.SockPositionTag) where T : Node, new()
         {
             if (_nodeLookup.TryGetValue(stringKey, out Node lookupNode))
             {
@@ -220,11 +252,42 @@ namespace SocksTool.Editor.CustomEditors.Builders
             }
 
             node          = ScriptableObject.CreateInstance<T>();
-            node.position = _nodeCursor * Spacing;
+            node.position = GetNodePositionFromStringInfo(stringInfo, positionTagFilter);
+
+            _nodeStringInfoLookup.Add(node, stringInfo);
+            
             _nodeLookup.Add(stringKey, node);
             AddNodeToGraph(node);
+
             _nodeCursor.x++;
             return true;
+        }
+
+        private Vector2 GetNodePositionFromStringInfo(StringInfo stringInfo, string tagFilter = SockTag.SockPositionTag)
+        {
+            Vector2 position = _nodeCursor * Spacing;
+            if (stringInfo.metadata == null) { return position; }
+
+            string tag = stringInfo.metadata.FirstOrDefault(s => s.StartsWith(tagFilter + ":"));
+
+            if (tag == null) { return position; }
+
+            try
+            {
+                string   positionString    = tag[(tag.IndexOf(':') + 1)..];
+                string[] positionDelimited = positionString.Split(',');
+                string   xString           = positionDelimited[0];
+                string   yString           = positionDelimited[1];
+
+                position = new Vector2(Convert.ToSingle(xString), Convert.ToSingle(yString));
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning("Malformed position tag on line " + stringInfo.lineNumber + ", using default position");
+                Debug.LogWarning(e);
+            }
+
+            return position;
         }
 
         private void AddNodeToGraph(Node node)
@@ -234,16 +297,16 @@ namespace SocksTool.Editor.CustomEditors.Builders
             node.graph       = _dialogueGraph;
         }
 
-        private int GetProgramCounterFromLabel(MapField<string, int> labels, string label)
+        private int GetProgramCounterFromLabel(IReadOnlyDictionary<string, int> labels, string label)
         {
             if (labels.TryGetValue(label, out int programCounter)) { return programCounter; }
 
             throw new IndexOutOfRangeException($"Label {label} Does not exist!");
         }
 
-        private class OpenPath
+        private class OpenPathInfo
         {
-            public OpenPath(NodePort nodePort, string label)
+            public OpenPathInfo(NodePort nodePort, string label)
             {
                 NodePort = nodePort;
                 Label    = label;
@@ -268,8 +331,8 @@ namespace SocksTool.Editor.CustomEditors.Builders
 
             return result;
         }
-        
-        
+
+
         private static void DebugLabels(Yarn.Node node)
         {
             Debug.Log("Labels:");

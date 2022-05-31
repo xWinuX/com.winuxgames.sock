@@ -18,8 +18,13 @@ namespace SocksTool.Editor.CustomEditors.Graphs
                 string exportedYarn = DialogueGraphToYarnBuilder.Build(_dialogueGraph);
                 Debug.Log(exportedYarn);
             }
-
-       
+            
+            
+            if (GUILayout.Button("Export Without Sock Tags", GUILayout.MaxWidth(400)))
+            {
+                string exportedYarn = DialogueGraphToYarnBuilder.Build(_dialogueGraph, false);
+                Debug.Log(exportedYarn);
+            }
         }
     }
 }

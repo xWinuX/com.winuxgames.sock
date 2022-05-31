@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace SocksTool.Editor.Utility
+namespace SocksTool.Runtime.NodeSystem.Utility
 {
     public static class NodeColor
     {

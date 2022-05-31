@@ -1,5 +1,7 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 using SocksTool.Runtime.NodeSystem.Nodes.Core;
+using SocksTool.Runtime.NodeSystem.Utility;
 using UnityEngine;
 using XNode;
 
@@ -11,27 +13,55 @@ namespace SocksTool.Runtime.NodeSystem.Nodes
     {
         public const string OutputFieldName = nameof(_out);
         public const string TitleFieldName  = nameof(_title);
+        public const string TagsFieldName   = nameof(_tags);
 
         [SerializeField]
         [Output(connectionType = ConnectionType.Override)]
         private NodeInfo _out;
 
-        [SerializeField] private string _title;
+        [SerializeField] private string       _title = "NodeTitle";
+        [SerializeField] private List<string> _tags  = new List<string>();
 
         public override string Name => "Start Node";
 
-        public string Title { get => _title; set => _title = value; }
+        public string       Title   { get => _title; set => _title = value; }
+        public EndNode      EndNode { get;           set; }
+        public List<string> Tags    => _tags;
+        
+        public override object GetValue(NodePort port) => new NodeInfo(this, 0, 0, 0);
 
-        public override object GetValue(NodePort port) => new NodeInfo(_title, 0, 0, 0);
+        protected override int GetIndent() => 0;
 
-        public override int GetIndent() => 0;
-
-        public override void GetText(StringBuilder sb)
+        public override void GetText(StringBuilder sb, int index = 0, bool includeSockTags = true)
         {
-            sb.Append("title: ");
-            sb.Append(_title);
+            // Header
+            sb.Append("title: ").Append(_title);
             sb.AppendLine();
-            sb.AppendLine("---");
+            sb.Append("tags: ");
+
+            // User tags
+            foreach (string tag in _tags)
+            {
+                sb.Append(tag).Append(' ');
+            }
+
+            // Internal Sock Tags
+            if (includeSockTags)
+            {
+                sb.Append(SockTag.SockStartNodePositionTag).Append(':');
+                GetPositionString(sb);
+                sb.Append(' ');
+                
+                sb.Append(SockTag.SockEndNodePositionTag).Append(':');
+                EndNode.GetPositionString(sb);
+                sb.Append(' ');
+            }
+            
+            sb.AppendLine();
+            
+            // Start Node
+            sb.Append("---");
+            sb.AppendLine();
         }
     }
 }

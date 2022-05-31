@@ -7,27 +7,27 @@ namespace SocksTool.Runtime.NodeSystem.Nodes.Core
     [Serializable]
     public struct NodeInfo
     {
-        public NodeInfo(string nodeTitle, int indent, int count, int offset)
+        public NodeInfo(StartNode startNode, int indent, int count, int offset)
         {
-            _nodeTitle = nodeTitle;
+            _startNode = startNode;
             _indent    = indent;
             _count     = count;
             _offset    = offset;
         }
 
-        [SerializeField] private string _nodeTitle;
+        [SerializeField] private StartNode _startNode;
         [SerializeField] private int    _indent;
         [SerializeField] private int    _count;
         [SerializeField] private int    _offset;
 
 
-        public static NodeInfo ErrorNodeInfo = new NodeInfo("ERROR", -1, -1, -1);
+        public static NodeInfo ErrorNodeInfo = new NodeInfo(null, -1, -1, -1);
 
-        public string NodeTitle => _nodeTitle;
-        public int    Indent    => _indent;
-        public int    Count     => _count;
-        public int    Offset    => _offset;
+        public StartNode StartNode => _startNode;
+        public int       Indent    => _indent;
+        public int       Count     => _count;
+        public int       Offset    => _offset;
 
-        public bool CanConnectTo(NodeInfo other) => NodeTitle != other.NodeTitle && Indent == other.Indent;
+        public bool CanConnectTo(NodeInfo other) => !StartNode.Equals(other.StartNode) && Indent == other.Indent;
     }
 }
