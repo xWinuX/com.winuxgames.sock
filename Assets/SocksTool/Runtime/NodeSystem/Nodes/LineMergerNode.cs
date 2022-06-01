@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text;
 using SocksTool.Runtime.NodeSystem.Nodes.Core;
 using UnityEngine;
@@ -11,12 +12,14 @@ namespace SocksTool.Runtime.NodeSystem.Nodes
     public class LineMergerNode : MultiInputNode
     {
         public const string OutputFieldName = nameof(_out);
-        
+
         [SerializeField]
         [Output(typeConstraint = TypeConstraint.Strict, connectionType = ConnectionType.Override)]
         private NodeInfo _out;
 
         public override string Name => "Line Merger";
+
+        public override Type[] AllowedInputTypes { get; } = { typeof(LineNode) };
 
         public override void GetText(StringBuilder sb, int index = 0, bool includeSockTags = true) { }
 
@@ -24,10 +27,12 @@ namespace SocksTool.Runtime.NodeSystem.Nodes
         {
             NodeInfo[] infos = GetInputValues(InputFieldName, NodeInfo.ErrorNodeInfo);
 
-            int offset       = infos.Sum(nodeInfo => nodeInfo.Offset);
-            int lowestIndent = infos.Min(nodeInfo => nodeInfo.Indent)-1;
+            int    lowestIndent = infos.Min(nodeInfo => nodeInfo.Indent) - 1;
+            int    minLength    = infos.Min(nodeInfo=>nodeInfo.Identifier.Length); // this gets you the shortest length of all elements in names
+            string shortest     = infos.FirstOrDefault(nodeInfo=>nodeInfo.Identifier.Length == minLength).Identifier;
 
-            return new NodeInfo(infos[0].StartNode, lowestIndent, 0, offset);
+            LastValidNodeInfo = new NodeInfo(typeof(LineMergerNode), infos[0].StartNode, lowestIndent, shortest);
+            return LastValidNodeInfo;
         }
     }
 }

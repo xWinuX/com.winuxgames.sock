@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using SocksTool.Runtime.NodeSystem.Nodes.Core;
 using SocksTool.Runtime.NodeSystem.Utility;
+using SocksTool.Runtime.Utility;
 using UnityEngine;
 using XNode;
 
@@ -24,10 +26,20 @@ namespace SocksTool.Runtime.NodeSystem.Nodes
 
         public override string Name => "Start";
 
+        public override Type[] AllowedInputTypes { get; } =
+        {
+            typeof(LineNode),
+            typeof(OptionNode)
+        };
+
         public List<string> Tags  => _tags;
         public string       Title { get => _title; set => _title = value; }
-        
-        public override object GetValue(NodePort port) => new NodeInfo(this, 0, 0, 0);
+
+        public override object GetValue(NodePort port)
+        {
+            LastValidNodeInfo = new NodeInfo(typeof(StartNode), this, 0, "0");
+            return LastValidNodeInfo;
+        } 
 
         protected override int GetIndent() => 0;
 
@@ -39,21 +51,18 @@ namespace SocksTool.Runtime.NodeSystem.Nodes
             sb.Append("tags: ");
 
             // User tags
-            foreach (string tag in _tags)
-            {
-                sb.Append(tag).Append(' ');
-            }
+            foreach (string tag in _tags) { sb.Append(tag).Append(' '); }
 
             // Internal Sock Tags
             if (includeSockTags)
             {
-                sb.Append(SockTag.SockStartNodePositionTag).Append(':');
+                sb.Append(SockConstants.SockStartNodePositionTag).Append(':');
                 GetPositionString(sb);
                 sb.Append(' ');
             }
-            
+
             sb.AppendLine();
-            
+
             // Start Node
             sb.Append("---");
             sb.AppendLine();

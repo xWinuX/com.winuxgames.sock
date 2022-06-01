@@ -1,6 +1,8 @@
+using System;
 using System.Text;
 using SocksTool.Runtime.NodeSystem.Nodes.Core;
 using SocksTool.Runtime.NodeSystem.Utility;
+using SocksTool.Runtime.Utility;
 using UnityEngine;
 using XNode;
 
@@ -27,17 +29,26 @@ namespace SocksTool.Runtime.NodeSystem.Nodes
         public string Text { get => _text; set => _text = value; }
 
         public override string Name => "Line";
-        
+
+        public override Type[] AllowedInputTypes { get; } =
+        {
+            typeof(StartNode),
+            typeof(LineNode),
+            typeof(OptionNode),
+            typeof(LineMergerNode)
+        };
+
         public override object GetValue(NodePort port)
         {
             NodeInfo nodeInfo = GetInputValue(InputFieldName, NodeInfo.ErrorNodeInfo);
-            return new NodeInfo(nodeInfo.StartNode, nodeInfo.Indent, nodeInfo.Count+1, nodeInfo.Offset);
+            LastValidNodeInfo = new NodeInfo(typeof(LineNode), nodeInfo.StartNode, nodeInfo.Indent, nodeInfo.Identifier);
+            return LastValidNodeInfo;
         }
 
         public override void GetText(StringBuilder sb, int index = 0, bool includeSockTags = true)
         {
             base.GetText(sb, index, includeSockTags);
-            
+
             if (!string.IsNullOrWhiteSpace(_character))
             {
                 sb.Append(Character);
@@ -46,7 +57,7 @@ namespace SocksTool.Runtime.NodeSystem.Nodes
 
             sb.Append(_text);
 
-            if (includeSockTags) { AddPositionTag(sb, SockTag.SockPositionTag); }
+            if (includeSockTags) { AddPositionTag(sb, SockConstants.SockPositionTag); }
 
             sb.AppendLine();
         }

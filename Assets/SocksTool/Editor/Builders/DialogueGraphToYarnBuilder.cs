@@ -5,6 +5,7 @@ using SocksTool.Runtime.NodeSystem.NodeGraphs;
 using SocksTool.Runtime.NodeSystem.Nodes;
 using SocksTool.Runtime.NodeSystem.Nodes.Core;
 using SocksTool.Runtime.NodeSystem.Utility;
+using SocksTool.Runtime.Utility;
 using UnityEngine;
 using XNode;
 
@@ -62,7 +63,7 @@ namespace SocksTool.Editor.Builders
                     isLastInPath = info.LastInPath;
                 }
                 
-                int iterationLimiter = 1000;
+                int iterationLimiter = SockConstants.IterationLimit;
                 while (iterationLimiter > 0 && !stop)
                 {
                     switch (connectedTo.node)
@@ -91,7 +92,7 @@ namespace SocksTool.Editor.Builders
                                     string s = sb.ToString().TrimEnd();
                                     sb.Clear();
                                     sb.Append(s);
-                                    lineMergerNode.AddPositionTag(sb, SockTag.SockLineMergerNodePositionTag);
+                                    lineMergerNode.AddPositionTag(sb, SockConstants.SockLineMergerNodePositionTag);
                                     sb.AppendLine();
                                 }
                             }

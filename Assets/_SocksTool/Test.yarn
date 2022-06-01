@@ -1,32 +1,32 @@
 ﻿title: Test
-tags: __PRIV_SOCK_POSITION_START-NODE:8,-8 __PRIV_SOCK_POSITION_END-NODE:3848,760 
+tags: 
 ---
-Character: This is a Test, everything[wait=0.5/] should[wait=0.5/] be[wait=0.5/] working[wait=0.5/] now #__PRIV_SOCK_POSITION:360,-8
-Character: And Questions! #__PRIV_SOCK_POSITION:700,0
--> Other Option #__PRIV_SOCK_POSITION:1048,-8
-    ajskdasjldaskld #__PRIV_SOCK_POSITION:4900,750
+Character: This is a Test, everything[wait=0.5/] should[wait=0.5/] be[wait=0.5/] working[wait=0.5/] now
+Character: And Questions!
+-> Other Option
+    ajskdasjldaskld
 -> Jump Options
     <<jump AnswerNode>>
 -> Option 1
-    This is the reply after Option 1 #__PRIV_SOCK_POSITION:1400,450
-    asdasdasdasdasdasdasd #__PRIV_SOCK_POSITION:1750,450
-    nested option #__PRIV_SOCK_POSITION:1640,-616
-    -> Nested Option 1 #__PRIV_SOCK_POSITION:2280,-648
-        nested reply 1 #__PRIV_SOCK_POSITION:4200,750
+    This is the reply after Option 1
+    asdasdasdasdasdasdasd
+    nested option
+    -> Nested Option 1
+        nested reply 1
     -> Nested Option 2
-        nested reply 2 #__PRIV_SOCK_POSITION:2800,750
-    Text after nested options #__PRIV_SOCK_POSITION:3150,750 #__PRIV_SOCK_POSITION_LINE-MERGER-NODE:4900,750
-OtherCharacter: And this text will always appear after the options are done! #__PRIV_SOCK_POSITION:3500,750 #__PRIV_SOCK_POSITION_LINE-MERGER-NODE:5600,750
+        nested reply 2
+    Text after nested options
+OtherCharacter: And this text will always appear after the options are done!
 ===
 
 title: AnswerNode
-tags: __PRIV_SOCK_POSITION_START-NODE:5600,750 __PRIV_SOCK_POSITION_END-NODE:7350,1050 
+tags: 
 ---
-This is the answer Node #__PRIV_SOCK_POSITION:5950,750
--> Option 1 #__PRIV_SOCK_POSITION:6300,750
-    This is the reply after Option 1 #__PRIV_SOCK_POSITION:7700,1050
-    asdasdasdasdasdasdasd #__PRIV_SOCK_POSITION:8050,1050
+This is the answer Node
+-> Option 1
+    This is the reply after Option 1
+    asdasdasdasdasdasdasd
 -> Option 2
-    jasdjasjdjasjd #__PRIV_SOCK_POSITION:6650,1050
-    ajsdkasjkdajsjd #__PRIV_SOCK_POSITION:7000,1050
+    jasdjasjdjasjd
+    ajsdkasjkdajsjd
 ===

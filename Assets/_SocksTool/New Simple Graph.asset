@@ -55,13 +55,11 @@ MonoBehaviour:
   _in:
     _startNode: {fileID: 0}
     _indent: 0
-    _count: 0
-    _offset: 0
+    _identifier: 
   _out:
     _startNode: {fileID: 0}
     _indent: 0
-    _count: 0
-    _offset: 0
+    _identifier: 
   _character: 
   _text: 
 --- !u!114 &3636577361653273338
@@ -104,12 +102,10 @@ MonoBehaviour:
   _in:
     _startNode: {fileID: 0}
     _indent: 0
-    _count: 0
-    _offset: 0
+    _identifier: 
   _out:
     _startNode: {fileID: 0}
     _indent: 0
-    _count: 0
-    _offset: 0
+    _identifier: 
   _character: 
   _text: 

@@ -1,7 +1,11 @@
-﻿namespace SocksTool.Runtime.NodeSystem.Utility
+﻿namespace SocksTool.Runtime.Utility
 {
-    public static class SockTag
+    public static class SockConstants
     {
+        // General
+        public const int IterationLimit = 1000;
+        
+        // Tags
         public const string SockTagPrefix                 = "__PRIV_SOCK_";
         public const string SockPositionTag               = SockTagPrefix + "POSITION";
         public const string SockLineMergerNodePositionTag = SockTagPrefix + "POSITION_LINE-MERGER-NODE";
