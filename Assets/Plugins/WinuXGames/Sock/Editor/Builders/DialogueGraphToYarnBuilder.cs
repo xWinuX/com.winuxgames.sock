@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SocksTool.Runtime.NodeSystem.NodeGraphs;
-using SocksTool.Runtime.NodeSystem.Nodes;
-using SocksTool.Runtime.NodeSystem.Nodes.Core;
-using SocksTool.Runtime.NodeSystem.Utility;
-using SocksTool.Runtime.Utility;
 using UnityEngine;
+using WInuXGames.Sock.Plugins.Editor.NodeSystem.NodeGraphs;
+using WInuXGames.Sock.Plugins.Editor.NodeSystem.Nodes;
+using WInuXGames.Sock.Plugins.Editor.NodeSystem.Nodes.Core;
+using WInuXGames.Sock.Plugins.Editor.Utility;
 using XNode;
 
-namespace SocksTool.Editor.Builders
+namespace WInuXGames.Sock.Plugins.Editor.Builders
 {
     public static class DialogueGraphToYarnBuilder
     {

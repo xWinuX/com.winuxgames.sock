@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using SocksTool.Runtime.NodeSystem.Nodes.Core;
-using SocksTool.Runtime.NodeSystem.Utility;
-using SocksTool.Runtime.Utility;
 using UnityEngine;
+using WInuXGames.Sock.Plugins.Editor.NodeSystem.Nodes.Core;
+using WInuXGames.Sock.Plugins.Editor.Utility;
 using XNode;
 
-namespace SocksTool.Runtime.NodeSystem.Nodes
+namespace WInuXGames.Sock.Plugins.Editor.NodeSystem.Nodes
 {
     [NodeWidth(300)]
     [CreateNodeMenu("Dialogue/Start", 3)]

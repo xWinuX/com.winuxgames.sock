@@ -2,7 +2,7 @@
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
-namespace SocksTool.Editor.Utility
+namespace WInuXGames.Sock.Plugins.Editor.Utility
 {
     public static class EditorUtility
     {

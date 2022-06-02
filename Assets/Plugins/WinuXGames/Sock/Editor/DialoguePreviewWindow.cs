@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using SocksTool.Runtime.Utility;
 using UnityEditor;
 using UnityEngine;
+using WInuXGames.Sock.Plugins.Editor.Utility;
 using Yarn;
 using Yarn.Compiler;
 using Yarn.Unity;
 
-namespace SocksTool.Editor
+namespace WInuXGames.Sock.Plugins.Editor
 {
     public class DialoguePreviewWindow : EditorWindow
     {

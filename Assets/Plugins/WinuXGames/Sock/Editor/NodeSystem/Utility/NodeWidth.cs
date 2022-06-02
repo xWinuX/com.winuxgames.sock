@@ -1,4 +1,4 @@
-﻿namespace SocksTool.Runtime.NodeSystem.Utility
+﻿namespace WInuXGames.Sock.Plugins.Editor.NodeSystem.Utility
 {
     public static class NodeWidth
     {

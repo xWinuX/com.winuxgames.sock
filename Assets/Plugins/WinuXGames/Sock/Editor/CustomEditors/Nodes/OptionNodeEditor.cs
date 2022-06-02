@@ -1,15 +1,16 @@
 ﻿using System.Linq;
-using SocksTool.Runtime.Extensions;
-using SocksTool.Runtime.NodeSystem.Nodes;
-using SocksTool.Runtime.NodeSystem.Nodes.Core;
-using SocksTool.Runtime.NodeSystem.Utility;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
+using WInuXGames.Sock.Plugins.Editor.CustomEditors.Nodes;
+using WInuXGames.Sock.Plugins.Editor.Extensions;
+using WInuXGames.Sock.Plugins.Editor.NodeSystem.Nodes;
+using WInuXGames.Sock.Plugins.Editor.NodeSystem.Nodes.Core;
+using WInuXGames.Sock.Plugins.Editor.NodeSystem.Utility;
 using XNode;
 using XNodeEditor;
 
-namespace SocksTool.Editor.CustomEditors.Nodes
+namespace WInuXGames.Sock.Editor.CustomEditors.Nodes
 {
     [CustomNodeEditor(typeof(OptionNode))]
     public class OptionNodeEditor : SockNodeEditor<OptionNode>

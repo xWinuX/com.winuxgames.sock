@@ -1,9 +1,9 @@
-﻿using SocksTool.Editor.Builders;
-using SocksTool.Runtime.NodeSystem.NodeGraphs;
-using UnityEngine;
+﻿using UnityEngine;
+using WInuXGames.Sock.Plugins.Editor.Builders;
+using WInuXGames.Sock.Plugins.Editor.NodeSystem.NodeGraphs;
 using XNodeEditor;
 
-namespace SocksTool.Editor.CustomEditors.Graphs
+namespace WInuXGames.Sock.Plugins.Editor.CustomEditors.Graphs
 {
     [CustomNodeGraphEditor(typeof(DialogueGraph))]
     public class DialogueGraphEditor : NodeGraphEditor

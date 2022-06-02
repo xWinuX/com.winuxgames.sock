@@ -1,9 +1,9 @@
-using SocksTool.Editor.Builders;
-using SocksTool.Runtime.NodeSystem.NodeGraphs;
 using UnityEditor;
+using WInuXGames.Sock.Plugins.Editor.Builders;
+using WInuXGames.Sock.Plugins.Editor.NodeSystem.NodeGraphs;
 using XNodeEditor;
 
-namespace SocksTool.Editor
+namespace WInuXGames.Sock.Plugins.Editor
 {
     public static class OpenYarnAssetCallback
     {

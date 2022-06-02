@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using SocksTool.Runtime.NodeSystem.NodeGraphs;
-using SocksTool.Runtime.Utility;
 using UnityEngine;
+using WInuXGames.Sock.Plugins.Editor.NodeSystem.NodeGraphs;
+using WInuXGames.Sock.Plugins.Editor.Utility;
 using XNode;
 
-namespace SocksTool.Runtime.NodeSystem.Nodes.Core
+namespace WInuXGames.Sock.Plugins.Editor.NodeSystem.Nodes.Core
 {
     public abstract class SockNode : Node
     {

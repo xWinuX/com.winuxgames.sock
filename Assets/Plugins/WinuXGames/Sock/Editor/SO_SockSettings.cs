@@ -1,8 +1,7 @@
 ﻿using System;
-using UnityEditor;
 using UnityEngine;
 
-namespace SocksTool.Editor
+namespace WInuXGames.Sock.Plugins.Editor
 {
 
     

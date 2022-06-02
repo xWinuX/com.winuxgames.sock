@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
-using SocksTool.Runtime.NodeSystem.Nodes.Core;
 using UnityEngine;
+using WInuXGames.Sock.Plugins.Editor.NodeSystem.Nodes.Core;
 using XNode;
 
-namespace SocksTool.Runtime.NodeSystem.Nodes
+namespace WInuXGames.Sock.Plugins.Editor.NodeSystem.Nodes
 {
     [NodeWidth(100)]
     [CreateNodeMenu("Dialogue/Line Merger", 2)]

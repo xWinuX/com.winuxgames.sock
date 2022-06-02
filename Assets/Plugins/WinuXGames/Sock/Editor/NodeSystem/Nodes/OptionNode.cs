@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SocksTool.Runtime.NodeSystem.Nodes.Core;
-using SocksTool.Runtime.Utility;
 using UnityEngine;
+using WInuXGames.Sock.Plugins.Editor.NodeSystem.Nodes.Core;
+using WInuXGames.Sock.Plugins.Editor.Utility;
 using XNode;
 
-namespace SocksTool.Runtime.NodeSystem.Nodes
+namespace WInuXGames.Sock.Plugins.Editor.NodeSystem.Nodes
 {
     [NodeWidth(300)]
     [CreateNodeMenu("Dialogue/Option", 1)]

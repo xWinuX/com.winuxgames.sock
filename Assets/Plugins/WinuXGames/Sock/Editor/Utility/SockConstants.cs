@@ -1,4 +1,4 @@
-﻿namespace SocksTool.Runtime.Utility
+﻿namespace WInuXGames.Sock.Plugins.Editor.Utility
 {
     public static class SockConstants
     {

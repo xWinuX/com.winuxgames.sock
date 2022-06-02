@@ -1,11 +1,10 @@
-﻿using SocksTool.Editor.Utility;
-using SocksTool.Runtime.NodeSystem.Nodes;
-using SocksTool.Runtime.NodeSystem.Utility;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
+using WInuXGames.Sock.Plugins.Editor.NodeSystem.Nodes;
+using WInuXGames.Sock.Plugins.Editor.NodeSystem.Utility;
 using XNodeEditor;
 
-namespace SocksTool.Editor.CustomEditors.Nodes
+namespace WInuXGames.Sock.Plugins.Editor.CustomEditors.Nodes
 {
     [CustomNodeEditor(typeof(LineMergerNode))]
     public class LineMergerNodeEditor : SockNodeEditor<LineMergerNode>
