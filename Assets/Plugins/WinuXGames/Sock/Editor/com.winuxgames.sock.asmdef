@@ -1,11 +1,11 @@
 {
-    "name": "com.winuxgames.sock.editor",
-    "rootNamespace": "",
+    "name": "com.winuxgames.sock",
+    "rootNamespace": "WInuXGames.Sock",
     "references": [],
-    "includePlatforms": [],
-    "excludePlatforms": [
+    "includePlatforms": [
         "Editor"
     ],
+    "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],

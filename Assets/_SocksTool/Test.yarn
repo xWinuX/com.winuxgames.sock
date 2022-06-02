@@ -1,0 +1,32 @@
+﻿title: Test
+tags: 
+---
+Character: This is a Test, everything[wait=0.5/] should[wait=0.5/] be[wait=0.5/] working[wait=0.5/] now
+Character: And Questions!
+-> Other Option
+    ajskdasjldaskld
+-> Jump Options
+    <<jump AnswerNode>>
+-> Option 1
+    This is the reply after Option 1
+    asdasdasdasdasdasdasd
+    nested option
+    -> Nested Option 1
+        nested reply 1
+    -> Nested Option 2
+        nested reply 2
+    Text after nested options
+OtherCharacter: And this text will always appear after the options are done!
+===
+
+title: AnswerNode
+tags: 
+---
+This is the answer Node
+-> Option 1
+    This is the reply after Option 1
+    asdasdasdasdasdasdasd
+-> Option 2
+    jasdjasjdjasjd
+    ajsdkasjkdajsjd
+===
