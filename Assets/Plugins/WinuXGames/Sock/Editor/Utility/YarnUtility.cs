@@ -25,18 +25,6 @@ namespace SocksTool.Runtime.Utility
         public static string GetPropertyStringValue(IReadOnlyDictionary<string, MarkupValue> property, string key, string defaultValue = "") =>
             !property.TryGetValue(key, out MarkupValue markupValue) ? defaultValue : markupValue.StringValue;
 
-        public static string GetOperandStringValue(IEnumerable<Operand> operands)
-        {
-            foreach (Operand operand in operands)
-            {
-                if (operand.ValueCase != Operand.ValueOneofCase.StringValue) { continue; }
-
-                return operand.StringValue;
-            }
-
-            return string.Empty;
-        }
-
         public static CompilationResult CompileYarnFile(string path)
         {
             CompilationJob compilationJob = CompilationJob.CreateFromFiles(path);
@@ -63,6 +51,13 @@ namespace SocksTool.Runtime.Utility
             }
 
             return result;
+        }
+
+        public static int GetProgramCounterFromLabel(IReadOnlyDictionary<string, int> labels, string label)
+        {
+            if (labels.TryGetValue(label, out int programCounter)) { return programCounter; }
+
+            throw new IndexOutOfRangeException($"Label {label} Does not exist!");
         }
     }
 }

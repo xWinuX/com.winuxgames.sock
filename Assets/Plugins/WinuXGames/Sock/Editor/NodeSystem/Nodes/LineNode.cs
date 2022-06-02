@@ -1,19 +1,17 @@
 using System;
 using System.Text;
 using SocksTool.Runtime.NodeSystem.Nodes.Core;
-using SocksTool.Runtime.NodeSystem.Utility;
 using SocksTool.Runtime.Utility;
 using UnityEngine;
 using XNode;
 
 namespace SocksTool.Runtime.NodeSystem.Nodes
 {
-    [NodeWidth(300)]
     [CreateNodeMenu("Dialogue/Line", 0)]
     public class LineNode : SingleInputNode
     {
         public const string OutputFieldName = nameof(_out);
-
+        
         [SerializeField]
         [Output(connectionType = ConnectionType.Override)]
         private NodeInfo _out;

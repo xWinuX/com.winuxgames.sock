@@ -110,13 +110,7 @@ namespace SocksTool.Runtime.NodeSystem.Nodes.Core
                         break;
                     default:
                         NodePort nodePort = connectedTo.node.Outputs.First();
-                        if (nodePort == null)
-                        {
-                            Pop();
-                            break;
-                        }
-
-                        if (nodePort.ConnectionCount == 0)
+                        if (nodePort == null || nodePort.ConnectionCount == 0)
                         {
                             Pop();
                             break;

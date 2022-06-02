@@ -1,4 +1,5 @@
-﻿using SocksTool.Runtime.Extensions;
+﻿using System.Linq;
+using SocksTool.Runtime.Extensions;
 using SocksTool.Runtime.NodeSystem.Nodes;
 using SocksTool.Runtime.NodeSystem.Nodes.Core;
 using SocksTool.Runtime.NodeSystem.Utility;
@@ -13,7 +14,22 @@ namespace SocksTool.Editor.CustomEditors.Nodes
     [CustomNodeEditor(typeof(OptionNode))]
     public class OptionNodeEditor : SockNodeEditor<OptionNode>
     {
-        private int _selectIndex = -1;
+        private int    _selectIndex = -1;
+        private string _hoverText;
+        private bool   _hasOutputError;
+
+        private readonly GUIStyle _headerStyle = new GUIStyle(NodeEditorResources.styles.nodeHeader);
+
+        public override void OnHeaderGUI()
+        {
+            _headerStyle.normal.textColor = _hasOutputError ? Color.red : NodeEditorResources.styles.nodeHeader.normal.textColor;
+
+            GUILayout.Label(
+                new GUIContent(target.name, _hasOutputError ? "Each output of a option node needs to be connected to a node" : ""),
+                _headerStyle,
+                GUILayout.Height(30)
+            );
+        }
 
         protected override void DrawNode()
         {
@@ -66,7 +82,7 @@ namespace SocksTool.Editor.CustomEditors.Nodes
 
             rect.width += NodeEditorWindow.current.graphEditor.GetPortStyle(port).padding.right;
             rect.width += NodeEditorWindow.current.graphEditor.GetPortStyle(port).margin.right;
-            Vector2 position = rect.position + new Vector2(rect.width + 3, 2);
+            Vector2 position = rect.position + new Vector2(rect.width + 3, -1);
             NodeEditorGUILayout.PortField(position, port);
         }
 
@@ -91,7 +107,19 @@ namespace SocksTool.Editor.CustomEditors.Nodes
             serializedObject.ApplyModifiedProperties();
             serializedObject.Update();
         }
+        
+        public override Color GetTint()
+        {
+            if (TargetNode == null) { return Color.magenta; }
 
-        public override Color GetTint() => NodeColor.OptionNodeColor;
+            if (TargetNode.DynamicOutputs.Any(targetNodeDynamicOutput => targetNodeDynamicOutput.ConnectionCount == 0))
+            {
+                _hasOutputError = true;
+                return NodeColor.OptionNodeColor * 0.5f;
+            }
+
+            _hasOutputError = false;
+            return NodeColor.OptionNodeColor;
+        }
     }
 }

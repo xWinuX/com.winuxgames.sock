@@ -21,6 +21,11 @@ namespace SocksTool.Editor.Builders
         /// </summary>
         public Vector2 Spacing { get; set; } = new Vector2(350, 150);
 
+        /// <summary>
+        /// Offset is added each time a node is created (default is 8 on both axis zo align them to the xNode grid)
+        /// </summary>
+        public Vector2 SpacingOffset { get; set; } = new Vector2(8, 8);
+
         private readonly Dictionary<string, Node>           _nodeLookup              = new Dictionary<string, Node>();
         private readonly Dictionary<string, List<NodePort>> _jumpLookup              = new Dictionary<string, List<NodePort>>();
         private readonly Dictionary<Node, StringInfo>       _nodeStringInfoLookup    = new Dictionary<Node, StringInfo>();
@@ -97,7 +102,7 @@ namespace SocksTool.Editor.Builders
 
                             currentOutput  = openPathInfo.NodePort;
                             _nodeCursor    = openPathInfo.NodeCursor;
-                            programCounter = GetProgramCounterFromLabel(node.Labels, openPathInfo.Label);
+                            programCounter = YarnUtility.GetProgramCounterFromLabel(node.Labels, openPathInfo.Label);
                         }
                         else { stop = true; }
                     }
@@ -105,7 +110,7 @@ namespace SocksTool.Editor.Builders
                     switch (instruction.Opcode)
                     {
                         case Instruction.Types.OpCode.JumpTo:
-                            programCounter = GetProgramCounterFromLabel(node.Labels, instruction.Operands[0].StringValue);
+                            programCounter = YarnUtility.GetProgramCounterFromLabel(node.Labels, instruction.Operands[0].StringValue);
                             break;
                         case Instruction.Types.OpCode.RunLine:
                         {
@@ -144,10 +149,10 @@ namespace SocksTool.Editor.Builders
 
                                     // Connect the node that was previously connected to the line node to the  merger
                                     previousConnection.Connect(lineMergerNode.GetInputPort(SockNode.InputFieldName));
-                                    
+
                                     // Connect merger to already existing line node (previous connection will automatically be disconnected)
                                     lineMergerOutput.Connect(lineNodeInput);
-                                    
+
                                     lineMergers.Add(lineMergerNode);
                                 }
 
@@ -179,7 +184,7 @@ namespace SocksTool.Editor.Builders
 
                             // Add new option to option node and add the resulting output port to the open paths stack
                             NodePort dynamicOutput = currentOptionNode.AddOption(stringInfo.text);
-                            openPaths.Push(new OpenPathInfo(dynamicOutput, instruction.Operands[1].StringValue, _nodeCursor));
+                            openPaths.Push(new OpenPathInfo(dynamicOutput, _nodeCursor, instruction.Operands[1].StringValue));
 
                             ModifyNodeCursor(new Vector2(0, 1));
                             programCounter++;
@@ -191,7 +196,7 @@ namespace SocksTool.Editor.Builders
                             openPathInfo = openPaths.Pop();
 
                             currentOutput  = openPathInfo.NodePort;
-                            programCounter = GetProgramCounterFromLabel(node.Labels, openPathInfo.Label);
+                            programCounter = YarnUtility.GetProgramCounterFromLabel(node.Labels, openPathInfo.Label);
                             break;
                         case Instruction.Types.OpCode.PushString:
                             stringStack.Push(instruction.Operands[0].StringValue);
@@ -226,16 +231,66 @@ namespace SocksTool.Editor.Builders
                     foreach (Vector2 inputPosition in lineMergerInput.GetConnections().Select(nodePort => nodePort.node.position))
                     {
                         if (inputPosition.x > position.x) { position.x = inputPosition.x; }
-                        if (inputPosition.y > position.y) { position.y = inputPosition.y; }
+
+                        if (inputPosition.y < position.y) { position.y = inputPosition.y; }
                     }
 
-                    if (_nodesWithoutPositionTag.Contains(lineMergerNode)) { lineMergerNode.position = position; }
+                    if (_nodesWithoutPositionTag.Contains(lineMergerNode))
+                    {
+                        _nodeCursor             = new Vector2(Mathf.Floor(position.x / Spacing.x), Mathf.Floor(position.y / Spacing.y));
+                        lineMergerNode.position = GetPositionFromNodeCursor();
+                    }
+
+                    NodePort connectedTo = lineMergerNode.GetOutputPort(LineMergerNode.OutputFieldName);
+                    openPaths.Clear();
+                    stop = false;
+
+                    void Pop()
+                    {
+                        if (!openPaths.TryPop(out OpenPathInfo openPathInfo))
+                        {
+                            stop = true;
+                            return;
+                        }
+
+                        connectedTo = openPathInfo.NodePort;
+
+                        _nodeCursor = openPathInfo.NodeCursor;
+                    }
+
+                    iterationLimit = SockConstants.IterationLimit;
+                    while (!stop && iterationLimit > 0)
+                    {
+                        connectedTo.node.position = GetPositionFromNodeCursor();
+                        ModifyNodeCursor(new Vector2(1, 0));
+                        if (connectedTo.node is OptionNode optionNode)
+                        {
+                            foreach (NodePort optionNodeDynamicOutput in optionNode.DynamicOutputs)
+                            {
+                                openPaths.Push(new OpenPathInfo(optionNodeDynamicOutput, _nodeCursor));
+                                ModifyNodeCursor(new Vector2(0, 1));
+                            }
+
+                            Pop();
+                            break;
+                        }
+
+                        NodePort nodePort = connectedTo.node.Outputs.First();
+                        if (nodePort == null || nodePort.ConnectionCount == 0)
+                        {
+                            Pop();
+                            break;
+                        }
+
+                        connectedTo = nodePort.GetConnection(0);
+
+                        iterationLimit--;
+                    }
+
+                    if (iterationLimit == 0) { Debug.LogError("Iteration limit of loop checker has been reached! The node tree is either too big or an unexpected bug occured"); }
                 }
-                
-                if (iterationLimit == 0)
-                {
-                    throw new OverflowException("There appears to be a circular reference inside the node tree");
-                }
+
+                if (iterationLimit == 0) { throw new OverflowException("There appears to be a circular reference inside the node tree"); }
             }
 
             _dialogueGraph.Ready = true;
@@ -288,7 +343,7 @@ namespace SocksTool.Editor.Builders
 
         private Vector2 GetNodePositionFromStringInfo(StringInfo stringInfo, out bool tagWasFound, string tagFilter = SockConstants.SockPositionTag)
         {
-            Vector2 position = _nodeCursor * Spacing;
+            Vector2 position = GetPositionFromNodeCursor();
             if (stringInfo.metadata == null)
             {
                 tagWasFound = false;
@@ -322,6 +377,8 @@ namespace SocksTool.Editor.Builders
             return position;
         }
 
+        private Vector2 GetPositionFromNodeCursor() => (_nodeCursor * Spacing) + SpacingOffset;
+
         private void AddNodeToGraph(Node node)
         {
             _dialogueGraph.nodes.Add(node);
@@ -329,34 +386,26 @@ namespace SocksTool.Editor.Builders
             node.graph       = _dialogueGraph;
         }
 
-        private int GetProgramCounterFromLabel(IReadOnlyDictionary<string, int> labels, string label)
-        {
-            if (labels.TryGetValue(label, out int programCounter)) { return programCounter; }
-
-            throw new IndexOutOfRangeException($"Label {label} Does not exist!");
-        }
-
         private void ModifyNodeCursor(Vector2 vector2)
         {
             _nodeCursor += vector2;
 
             if (_nodeCursor.x > _nodeCursorMax.x) { _nodeCursorMax.x = _nodeCursor.x; }
-
             if (_nodeCursor.y > _nodeCursorMax.y) { _nodeCursorMax.y = _nodeCursor.y; }
         }
 
         private class OpenPathInfo
         {
-            public OpenPathInfo(NodePort nodePort, string label, Vector2 nodeCursor)
+            public OpenPathInfo(NodePort nodePort, Vector2 nodeCursor, string label = "")
             {
                 NodePort   = nodePort;
-                Label      = label;
                 NodeCursor = nodeCursor;
+                Label      = label;
             }
 
             public NodePort NodePort   { get; }
-            public string   Label      { get; }
             public Vector2  NodeCursor { get; set; }
+            public string   Label      { get; }
         }
 
         private static void DebugLabels(Yarn.Node node)

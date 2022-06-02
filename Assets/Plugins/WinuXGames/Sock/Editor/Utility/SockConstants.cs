@@ -4,6 +4,8 @@
     {
         // General
         public const int IterationLimit = 1000;
+
+        public const int SockLineNodeWidth = 350;
         
         // Tags
         public const string SockTagPrefix                 = "__PRIV_SOCK_";
