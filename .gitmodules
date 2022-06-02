@@ -1,0 +1,6 @@
+[submodule "Assets/Plugins/WinuXGames/Sock/Plugins/YarnSpinner-Unity"]
+	path = Assets/Plugins/WinuXGames/Sock/Plugins/YarnSpinner-Unity
+	url = https://github.com/YarnSpinnerTool/YarnSpinner-Unity.git
+[submodule "Assets/Plugins/WinuXGames/Sock/Plugins/xNode"]
+	path = Assets/Plugins/WinuXGames/Sock/Plugins/xNode
+	url = https://github.com/Siccity/xNode.git
