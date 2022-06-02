@@ -1,11 +1,11 @@
 using System;
 using System.Text;
 using UnityEngine;
-using WInuXGames.Sock.Plugins.Editor.NodeSystem.Nodes.Core;
-using WInuXGames.Sock.Plugins.Editor.Utility;
+using WinuXGames.Sock.Editor.NodeSystem.Nodes.Core;
+using WinuXGames.Sock.Editor.Utility;
 using XNode;
 
-namespace WInuXGames.Sock.Plugins.Editor.NodeSystem.Nodes
+namespace WinuXGames.Sock.Editor.NodeSystem.Nodes
 {
     [CreateNodeMenu("Dialogue/Line", 0)]
     public class LineNode : SingleInputNode

@@ -5,7 +5,7 @@ using Yarn;
 using Yarn.Compiler;
 using Yarn.Markup;
 
-namespace WInuXGames.Sock.Plugins.Editor.Utility
+namespace WinuXGames.Sock.Editor.Utility
 {
     public static class YarnUtility
     {

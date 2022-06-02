@@ -2,15 +2,14 @@
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
-using WInuXGames.Sock.Plugins.Editor.CustomEditors.Nodes;
-using WInuXGames.Sock.Plugins.Editor.Extensions;
-using WInuXGames.Sock.Plugins.Editor.NodeSystem.Nodes;
-using WInuXGames.Sock.Plugins.Editor.NodeSystem.Nodes.Core;
-using WInuXGames.Sock.Plugins.Editor.NodeSystem.Utility;
+using WinuXGames.Sock.Editor.Extensions;
+using WinuXGames.Sock.Editor.NodeSystem.Nodes;
+using WinuXGames.Sock.Editor.NodeSystem.Nodes.Core;
+using WinuXGames.Sock.Editor.NodeSystem.Utility;
 using XNode;
 using XNodeEditor;
 
-namespace WInuXGames.Sock.Editor.CustomEditors.Nodes
+namespace WinuXGames.Sock.Editor.CustomEditors.Nodes
 {
     [CustomNodeEditor(typeof(OptionNode))]
     public class OptionNodeEditor : SockNodeEditor<OptionNode>

@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Text;
 using UnityEngine;
-using WInuXGames.Sock.Plugins.Editor.NodeSystem.Nodes.Core;
+using WinuXGames.Sock.Editor.NodeSystem.Nodes.Core;
 using XNode;
 
-namespace WInuXGames.Sock.Plugins.Editor.NodeSystem.Nodes
+namespace WinuXGames.Sock.Editor.NodeSystem.Nodes
 {
     [NodeWidth(100)]
     [CreateNodeMenu("Dialogue/Line Merger", 2)]

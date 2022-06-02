@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace WInuXGames.Sock.Plugins.Editor.NodeSystem.Nodes.Core
+namespace WinuXGames.Sock.Editor.NodeSystem.Nodes.Core
 {
     [Serializable]
     public struct NodeInfo

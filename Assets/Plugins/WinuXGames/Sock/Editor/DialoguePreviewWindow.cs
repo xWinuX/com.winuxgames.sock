@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using WInuXGames.Sock.Plugins.Editor.Utility;
+using WinuXGames.Sock.Editor.Utility;
 using Yarn;
 using Yarn.Compiler;
 using Yarn.Unity;
 
-namespace WInuXGames.Sock.Plugins.Editor
+namespace WinuXGames.Sock.Editor
 {
     public class DialoguePreviewWindow : EditorWindow
     {

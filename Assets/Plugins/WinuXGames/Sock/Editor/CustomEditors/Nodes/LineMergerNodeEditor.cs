@@ -1,10 +1,10 @@
 ﻿using UnityEditor;
 using UnityEngine;
-using WInuXGames.Sock.Plugins.Editor.NodeSystem.Nodes;
-using WInuXGames.Sock.Plugins.Editor.NodeSystem.Utility;
+using WinuXGames.Sock.Editor.NodeSystem.Nodes;
+using WinuXGames.Sock.Editor.NodeSystem.Utility;
 using XNodeEditor;
 
-namespace WInuXGames.Sock.Plugins.Editor.CustomEditors.Nodes
+namespace WinuXGames.Sock.Editor.CustomEditors.Nodes
 {
     [CustomNodeEditor(typeof(LineMergerNode))]
     public class LineMergerNodeEditor : SockNodeEditor<LineMergerNode>

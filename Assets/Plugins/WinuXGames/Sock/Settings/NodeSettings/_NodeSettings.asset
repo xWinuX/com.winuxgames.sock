@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 379cd6087e3448178280127a2e18503a, type: 3}
+  m_Name: _NodeSettings
+  m_EditorClassIdentifier: 
+  _lineNodeSettings:
+    _color: {r: 0.60784316, g: 0.4392157, b: 0.1764706, a: 1}
+    _width: 350
+  _optionNodeSettings:
+    _color: {r: 0.20784314, g: 0.41960785, b: 0.60784316, a: 1}
+    _width: 350
+  _startNodeSettings:
+    _color: {r: 0.21960784, g: 0.60784316, b: 0.25882354, a: 1}
+    _width: 350
+  _lineMergerNodeSettings:
+    _color: {r: 0.60784316, g: 0.5372549, b: 0.14901961, a: 1}
+    _width: 100

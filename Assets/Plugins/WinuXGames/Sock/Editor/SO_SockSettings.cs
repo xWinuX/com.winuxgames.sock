@@ -1,30 +1,12 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace WInuXGames.Sock.Plugins.Editor
+namespace WinuXGames.Sock.Editor
 {
-
-    
-    [Serializable]
-    public class SockNodeSettings
-    {
-        [SerializeField] private Color _color;
-        [SerializeField] private int   _width;
-
-        public Color Color => _color;
-        public int   Width => _width;
-    }
-
-    public class SO_SockNodeSettings : ScriptableObject
-    {
-        [SerializeField] private SockNodeSettings _lineNodeSettings;
-        [SerializeField] private SockNodeSettings _optionNodeSettings;
-        [SerializeField] private SockNodeSettings _startNodeSettings;
-        [SerializeField] private SockNodeSettings _lineMergerNodeSettings;
-    }
-    
+    [CreateAssetMenu(menuName = "Create SO_SockSettings", fileName = "SO_SockSettings", order = 0)]
     public class SO_SockSettings : ScriptableObject
     {
         [SerializeField] private SO_SockNodeSettings _nodeSettings;
+        
+        internal SO_SockNodeSettings NodeSettings { get => _nodeSettings; set => _nodeSettings = value; }
     }
 }

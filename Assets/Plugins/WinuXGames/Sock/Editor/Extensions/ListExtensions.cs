@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace WInuXGames.Sock.Plugins.Editor.Extensions
+namespace WinuXGames.Sock.Editor.Extensions
 {
     public static class ListExtensions
     {

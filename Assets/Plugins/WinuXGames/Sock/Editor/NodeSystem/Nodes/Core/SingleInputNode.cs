@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace WInuXGames.Sock.Plugins.Editor.NodeSystem.Nodes.Core
+namespace WinuXGames.Sock.Editor.NodeSystem.Nodes.Core
 {
     public abstract class SingleInputNode : SockNode
     {

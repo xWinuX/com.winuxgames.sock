@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using WInuXGames.Sock.Plugins.Editor.NodeSystem.NodeGraphs;
-using WInuXGames.Sock.Plugins.Editor.NodeSystem.Nodes;
-using WInuXGames.Sock.Plugins.Editor.NodeSystem.Nodes.Core;
-using WInuXGames.Sock.Plugins.Editor.Utility;
+using WinuXGames.Sock.Editor.NodeSystem.NodeGraphs;
+using WinuXGames.Sock.Editor.NodeSystem.Nodes;
+using WinuXGames.Sock.Editor.NodeSystem.Nodes.Core;
+using WinuXGames.Sock.Editor.Utility;
 using XNode;
 using Yarn;
 using Yarn.Compiler;
 using Yarn.Markup;
 using Node = XNode.Node;
 
-namespace WInuXGames.Sock.Plugins.Editor.Builders
+namespace WinuXGames.Sock.Editor.Builders
 {
     public class YarnToDialogueGraphBuilder
     {

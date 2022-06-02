@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
-using WInuXGames.Sock.Plugins.Editor.NodeSystem.Nodes.Core;
+using WinuXGames.Sock.Editor.NodeSystem.Nodes.Core;
 using XNodeEditor;
 
-namespace WInuXGames.Sock.Plugins.Editor.CustomEditors.Nodes
+namespace WinuXGames.Sock.Editor.CustomEditors.Nodes
 {
     [CustomNodeEditor(typeof(SockNode))]
     public abstract class SockNodeEditor<T> : NodeEditor where T : SockNode

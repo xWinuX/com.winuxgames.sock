@@ -15,7 +15,6 @@ MonoBehaviour:
   nodes:
   - {fileID: 602630432327981897}
   - {fileID: 3636577361653273338}
-  <Ready>k__BackingField: 0
 --- !u!114 &602630432327981897
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -37,8 +36,8 @@ MonoBehaviour:
     values:
     - _fieldName: _in
       _node: {fileID: 602630432327981897}
-      _typeQualifiedName: SocksTool.Runtime.NodeSystem.Nodes.Core.NodeInfo, Assembly-CSharp-firstpass,
-        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      _typeQualifiedName: WinuXGames.Sock.Editor.NodeSystem.Nodes.Core.NodeInfo,
+        com.winuxgames.sock, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
       connections: []
       _direction: 0
       _connectionType: 1
@@ -46,17 +45,21 @@ MonoBehaviour:
       _dynamic: 0
     - _fieldName: _out
       _node: {fileID: 602630432327981897}
-      _typeQualifiedName: SocksTool.Runtime.NodeSystem.Nodes.Core.NodeInfo, Assembly-CSharp-firstpass,
-        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      _typeQualifiedName: WinuXGames.Sock.Editor.NodeSystem.Nodes.Core.NodeInfo,
+        com.winuxgames.sock, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
       connections: []
       _direction: 1
       _connectionType: 1
       _typeConstraint: 0
       _dynamic: 0
-  <Looped>k__BackingField: 0
-  <LastValidNodeInfo>k__BackingField: {_startNode: {fileID: 0}, _indent: 0, _identifier: }
-  _in: {_startNode: {fileID: 0}, _indent: 0, _identifier: }
-  _out: {_startNode: {fileID: 0}, _indent: 0, _identifier: }
+  _in:
+    _startNode: {fileID: 0}
+    _indent: 0
+    _identifier: 
+  _out:
+    _startNode: {fileID: 0}
+    _indent: 0
+    _identifier: 
   _character: 
   _text: 
 --- !u!114 &3636577361653273338
@@ -80,8 +83,8 @@ MonoBehaviour:
     values:
     - _fieldName: _in
       _node: {fileID: 3636577361653273338}
-      _typeQualifiedName: SocksTool.Runtime.NodeSystem.Nodes.Core.NodeInfo, Assembly-CSharp-firstpass,
-        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      _typeQualifiedName: WinuXGames.Sock.Editor.NodeSystem.Nodes.Core.NodeInfo,
+        com.winuxgames.sock, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
       connections: []
       _direction: 0
       _connectionType: 1
@@ -89,16 +92,20 @@ MonoBehaviour:
       _dynamic: 0
     - _fieldName: _out
       _node: {fileID: 3636577361653273338}
-      _typeQualifiedName: SocksTool.Runtime.NodeSystem.Nodes.Core.NodeInfo, Assembly-CSharp-firstpass,
-        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      _typeQualifiedName: WinuXGames.Sock.Editor.NodeSystem.Nodes.Core.NodeInfo,
+        com.winuxgames.sock, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
       connections: []
       _direction: 1
       _connectionType: 1
       _typeConstraint: 0
       _dynamic: 0
-  <Looped>k__BackingField: 0
-  <LastValidNodeInfo>k__BackingField: {_startNode: {fileID: 0}, _indent: 0, _identifier: }
-  _in: {_startNode: {fileID: 0}, _indent: 0, _identifier: }
-  _out: {_startNode: {fileID: 0}, _indent: 0, _identifier: }
+  _in:
+    _startNode: {fileID: 0}
+    _indent: 0
+    _identifier: 
+  _out:
+    _startNode: {fileID: 0}
+    _indent: 0
+    _identifier: 
   _character: 
   _text: 

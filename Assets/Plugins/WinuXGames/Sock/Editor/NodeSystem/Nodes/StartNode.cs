@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
-using WInuXGames.Sock.Plugins.Editor.NodeSystem.Nodes.Core;
-using WInuXGames.Sock.Plugins.Editor.Utility;
+using WinuXGames.Sock.Editor.NodeSystem.Nodes.Core;
+using WinuXGames.Sock.Editor.Utility;
 using XNode;
 
-namespace WInuXGames.Sock.Plugins.Editor.NodeSystem.Nodes
+namespace WinuXGames.Sock.Editor.NodeSystem.Nodes
 {
     [NodeWidth(300)]
     [CreateNodeMenu("Dialogue/Start", 3)]

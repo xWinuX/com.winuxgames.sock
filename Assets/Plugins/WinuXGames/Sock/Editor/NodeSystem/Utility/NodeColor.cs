@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace WInuXGames.Sock.Plugins.Editor.NodeSystem.Utility
+namespace WinuXGames.Sock.Editor.NodeSystem.Utility
 {
     public static class NodeColor
     {

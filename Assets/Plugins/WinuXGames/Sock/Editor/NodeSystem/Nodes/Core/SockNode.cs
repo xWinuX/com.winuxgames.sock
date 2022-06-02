@@ -4,11 +4,11 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-using WInuXGames.Sock.Plugins.Editor.NodeSystem.NodeGraphs;
-using WInuXGames.Sock.Plugins.Editor.Utility;
+using WinuXGames.Sock.Editor.NodeSystem.NodeGraphs;
+using WinuXGames.Sock.Editor.Utility;
 using XNode;
 
-namespace WInuXGames.Sock.Plugins.Editor.NodeSystem.Nodes.Core
+namespace WinuXGames.Sock.Editor.NodeSystem.Nodes.Core
 {
     public abstract class SockNode : Node
     {

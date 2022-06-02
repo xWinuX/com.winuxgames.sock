@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using XNode;
 
-namespace WInuXGames.Sock.Plugins.Editor.NodeSystem.NodeGraphs
+namespace WinuXGames.Sock.Editor.NodeSystem.NodeGraphs
 {
     [CreateAssetMenu]
     public class DialogueGraph : NodeGraph
