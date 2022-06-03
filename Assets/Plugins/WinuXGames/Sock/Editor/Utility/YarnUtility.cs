@@ -10,6 +10,20 @@ namespace WinuXGames.Sock.Editor.Utility
     public static class YarnUtility
     {
         private static readonly Dialogue          Dialogue = new Dialogue(new MemoryVariableStore());
+
+        public static string TextWithoutCharacterName(MarkupParseResult result, out string characterName)
+        {
+            // Parse text and look for character attribute and assign it to node if it's there
+            if (result.TryGetAttributeWithName("character", out MarkupAttribute characterNameAttribute))
+            {
+                characterName = GetPropertyStringValue(characterNameAttribute.Properties, "name");
+                return result.Text.Remove(characterNameAttribute.Position, characterNameAttribute.Length);
+            }
+
+            characterName = null;
+            return result.Text;
+        }
+        
         public static           MarkupParseResult ParseMarkup(string text) => Dialogue.ParseMarkup(text);
 
         public static float GetPropertyNumberValue(IReadOnlyDictionary<string, MarkupValue> property, string key, float defaultValue = 0f)

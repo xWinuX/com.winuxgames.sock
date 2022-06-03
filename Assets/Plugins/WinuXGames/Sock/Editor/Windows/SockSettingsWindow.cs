@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using WinuXGames.Sock.Editor.Settings;
@@ -23,7 +24,7 @@ namespace WinuXGames.Sock.Editor.Windows
             _sockSettings = SockSettings.GetSettings();
 
             if (_allNodeSettingsDictionary == null) { GetNodeSettings(); }
-            
+
             DrawGraphSettings();
             DrawNodeSettings();
         }
@@ -31,16 +32,15 @@ namespace WinuXGames.Sock.Editor.Windows
         [MenuItem("WinuXGames/Sock/Settings")]
         public static void ShowWindow() { GetWindowWithRect<SockSettingsWindow>(new Rect(0, 0, 400, 430)); }
 
-        private GUIStyle GetHeaderStyle() =>
-            _headerStyle ??= new GUIStyle
+        private GUIStyle GetHeaderStyle() => _headerStyle ??= new GUIStyle
+        {
+            fontSize  = 20,
+            fontStyle = FontStyle.Bold,
+            normal =
             {
-                fontSize  = 20,
-                fontStyle = FontStyle.Bold,
-                normal =
-                {
-                    textColor = EditorStyles.label.normal.textColor
-                }
-            };
+                textColor = EditorStyles.label.normal.textColor
+            }
+        };
 
         private void DrawGraphSettings()
         {
@@ -61,12 +61,14 @@ namespace WinuXGames.Sock.Editor.Windows
                 NodeEditorWindow.RepaintAll();
                 EditorUtility.SetDirty(_sockSettings);
             }
+
             GUILayout.Space(10f);
             if (GUILayout.Button("Reset to default"))
             {
                 SockSettings.ResetGraphSettings();
                 GetNodeSettings();
             }
+
             GUILayout.EndVertical();
             GUILayout.Space(10f);
         }
@@ -102,6 +104,7 @@ namespace WinuXGames.Sock.Editor.Windows
                 SockSettings.ResetNodeSettings();
                 GetNodeSettings();
             }
+
             GUILayout.EndVertical();
             if (EditorGUI.EndChangeCheck())
             {

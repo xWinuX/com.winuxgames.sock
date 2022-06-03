@@ -27,6 +27,9 @@ namespace WinuXGames.Sock.Editor.Core
 
             if (!System.IO.File.Exists(SockSettings.CopySockSettingsPath)) { AssetDatabase.CopyAsset(SockSettings.SourceSockSettingsPath, SockSettings.CopySockSettingsPath); }
             if (!System.IO.File.Exists(SockSettings.CopySockNodeSettingsPath)) { AssetDatabase.CopyAsset(SockSettings.SourceSockNodeSettingsPath, SockSettings.CopySockNodeSettingsPath); }
+            
+            AssetDatabase.Refresh();
+            AssetDatabase.SaveAssets();
         }
     }
 }

@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _connectionColor: {r: 0.46057317, g: 0.8490566, b: 0.6114427, a: 1}
   _connectionStyle: 0
-  _nodeSettings: {fileID: 11400000, guid: dbddc57313e5ef44597458aead8c5e04, type: 2}
+  _nodeSettings: {fileID: 0}

@@ -5,6 +5,7 @@ using UnityEngine;
 using WinuXGames.Sock.Editor.Utility;
 using Yarn;
 using Yarn.Compiler;
+using Yarn.Markup;
 
 namespace WinuXGames.Sock.Editor.Windows
 {
@@ -19,7 +20,9 @@ namespace WinuXGames.Sock.Editor.Windows
         internal static void ShowWindow(string yarnString, string startNode)
         {
             DialoguePreviewWindow window = CreateInstance<DialoguePreviewWindow>();
-            window.position = new Rect(0, 0, 400, 430);
+            window.position = new Rect(0, 0, 300, 200);
+            window.minSize  = window.position.size;
+            window.maxSize  = window.position.size;
             window.StartPreview(yarnString, startNode);
             window.Show();
         }
@@ -58,11 +61,38 @@ namespace WinuXGames.Sock.Editor.Windows
 
         private void LineHandler(Line line)
         {
-            string actualText = _currentStringTable[line.ID].text;
+            string            actualText           = _currentStringTable[line.ID].text;
+            MarkupParseResult result               = YarnUtility.ParseMarkup(actualText);
+            string            textWithoutCharacter = YarnUtility.TextWithoutCharacterName(result, out string characterName);
             _drawPreview = () =>
             {
-                GUILayout.Label(actualText);
+                GUILayout.BeginVertical();
+                GUILayout.FlexibleSpace();
+                GUILayout.BeginHorizontal();
+                GUILayout.FlexibleSpace();
+                GUILayout.Label(characterName, EditorStyles.boldLabel);
+                GUILayout.FlexibleSpace();
+                GUILayout.EndHorizontal();
+                GUILayout.BeginHorizontal();
+                GUILayout.FlexibleSpace();
+                GUILayout.TextArea(
+                    textWithoutCharacter,
+                    EditorStyles.textArea,
+                    GUILayout.MinWidth(200),
+                    GUILayout.MinHeight(100),
+                    GUILayout.MaxWidth(200),
+                    GUILayout.MaxHeight(100)
+                );
+                GUILayout.FlexibleSpace();
+                GUILayout.EndHorizontal();
+                GUILayout.BeginHorizontal();
+                GUILayout.FlexibleSpace();
                 if (GUILayout.Button("Next")) { _currentDialogue.Continue(); }
+
+                GUILayout.FlexibleSpace();
+                GUILayout.EndHorizontal();
+                GUILayout.FlexibleSpace();
+                GUILayout.EndVertical();
             };
         }
 
@@ -70,17 +100,31 @@ namespace WinuXGames.Sock.Editor.Windows
         {
             _drawPreview = () =>
             {
+                GUILayout.BeginVertical();
+                GUILayout.FlexibleSpace();
                 for (int i = 0; i < options.Options.Length; i++)
                 {
                     OptionSet.Option option     = options.Options[i];
                     string           actualText = _currentStringTable[option.Line.ID].text;
-                    
-                    if (!GUILayout.Button(actualText)) { continue; }
+                    bool             clicked    = false;
 
-                    _currentDialogue.SetSelectedOption(i);
-                    _currentDialogue.Continue();
-                    break;
+                    GUILayout.BeginHorizontal();
+                    GUILayout.FlexibleSpace();
+                    if (GUILayout.Button(actualText, GUILayout.MinWidth(200), GUILayout.MaxWidth(200)))
+                    {
+                        _currentDialogue.SetSelectedOption(i);
+                        _currentDialogue.Continue();
+                        clicked = true;
+                    }
+
+                    GUILayout.FlexibleSpace();
+                    GUILayout.EndHorizontal();
+
+                    if (clicked) { break; }
                 }
+
+                GUILayout.FlexibleSpace();
+                GUILayout.EndVertical();
             };
         }
     }
