@@ -240,7 +240,8 @@ namespace WinuXGames.Sock.Editor.Builders
                 PositionLineMergersAndChildren(lineMergers, openPaths);
             }
 
-            _dialogueGraph.Ready = true;
+            _dialogueGraph.FileSourcePath = yarnAssetPath;
+            _dialogueGraph.Ready          = true;
             return _dialogueGraph;
         }
 
