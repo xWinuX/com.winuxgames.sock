@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _lineNodeSettings:
     _color: {r: 0.60784316, g: 0.4392157, b: 0.1764706, a: 1}
-    _width: 350
+    _width: 300
   _optionNodeSettings:
     _color: {r: 0.20784314, g: 0.41960785, b: 0.60784316, a: 1}
-    _width: 350
+    _width: 300
   _startNodeSettings:
     _color: {r: 0.21960784, g: 0.60784316, b: 0.25882354, a: 1}
-    _width: 350
+    _width: 300
   _lineMergerNodeSettings:
     _color: {r: 0.60784316, g: 0.5372549, b: 0.14901961, a: 1}
     _width: 100

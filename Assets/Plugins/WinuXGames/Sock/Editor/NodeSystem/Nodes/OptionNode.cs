@@ -9,7 +9,6 @@ using XNode;
 
 namespace WinuXGames.Sock.Editor.NodeSystem.Nodes
 {
-    [NodeWidth(300)]
     [CreateNodeMenu("Dialogue/Option", 1)]
     public class OptionNode : SingleInputNode
     {
@@ -19,10 +18,14 @@ namespace WinuXGames.Sock.Editor.NodeSystem.Nodes
         [Output(dynamicPortList = true, connectionType = ConnectionType.Override, typeConstraint = TypeConstraint.Strict)]
         private List<NodeInfo> _outputList = new List<NodeInfo>();
 
+        [SerializeField] // The options list shouldn't loose it's contents on reloads
+        [HideInInspector] // But it shouldn't be displayed since that's what the dynamic port list above does
+        private List<string> _optionStringList = new List<string>();
+        
         public override string Name              => "Option";
         public override Type[] AllowedInputTypes { get; } = { typeof(LineNode) };
-
-        public List<string> OptionStringList { get; } = new List<string>();
+        
+        public List<string> OptionStringList => _optionStringList;
 
         public override object GetValue(NodePort port)
         {
@@ -30,7 +33,7 @@ namespace WinuXGames.Sock.Editor.NodeSystem.Nodes
             LastValidNodeInfo = new NodeInfo(typeof(OptionNode), nodeInfo.StartNode, nodeInfo.Indent + 1, nodeInfo.Identifier + Outputs.ToList().IndexOf(port));
             return LastValidNodeInfo;
         }
-
+        
         public override void GetText(StringBuilder sb, int index = 0, bool includeSockTags = true)
         {
             base.GetText(sb, index, includeSockTags);

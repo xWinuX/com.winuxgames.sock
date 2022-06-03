@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace WinuXGames.Sock.Editor
+namespace WinuXGames.Sock.Editor.Settings
 {
     [CreateAssetMenu(menuName = "Create SO_SockSettings", fileName = "SO_SockSettings", order = 0)]
     public class SO_SockSettings : ScriptableObject

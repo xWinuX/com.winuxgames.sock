@@ -25,7 +25,7 @@ namespace WinuXGames.Sock.Editor.NodeSystem.Nodes
         public string Character { get => _character; set => _character = value; }
 
         public string Text { get => _text; set => _text = value; }
-
+        
         public override string Name => "Line";
 
         public override Type[] AllowedInputTypes { get; } =

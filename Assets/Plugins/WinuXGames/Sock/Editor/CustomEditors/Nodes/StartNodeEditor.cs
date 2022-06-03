@@ -3,6 +3,7 @@ using UnityEditorInternal;
 using UnityEngine;
 using WinuXGames.Sock.Editor.NodeSystem.Nodes;
 using WinuXGames.Sock.Editor.NodeSystem.Utility;
+using WinuXGames.Sock.Editor.Settings;
 using XNodeEditor;
 
 namespace WinuXGames.Sock.Editor.CustomEditors.Nodes
@@ -11,7 +12,9 @@ namespace WinuXGames.Sock.Editor.CustomEditors.Nodes
     public class StartNodeEditor : SockNodeEditor<StartNode>
     {
         private ReorderableList _tagList;
-        
+
+        protected override SockNodeSettings Settings { get; } = SockSettings.GetSettings().NodeSettings.StartNodeSettings;
+
         protected override void DrawNode()
         {
             EditorGUILayout.BeginHorizontal();
@@ -33,7 +36,5 @@ namespace WinuXGames.Sock.Editor.CustomEditors.Nodes
 
             _tagList.DoLayoutList();
         }
-        
-        public override Color GetTint() => NodeColor.StartNodeColor;
     }
 }

@@ -14,11 +14,11 @@ namespace WinuXGames.Sock.Editor.NodeSystem.Nodes.Core
     {
         public const string InputFieldName = "_in";
 
-        public virtual string Name => "Default";
+        public virtual string Name              => "Default";
+        public virtual Type[] AllowedInputTypes => Type.EmptyTypes;
 
-        public virtual Type[]   AllowedInputTypes => Type.EmptyTypes;
-        public         bool     Looped            { get; set; }
-        public         NodeInfo LastValidNodeInfo { get; protected set; }
+        public bool     Looped            { get; set; }
+        public NodeInfo LastValidNodeInfo { get; protected set; }
 
         public override object GetValue(NodePort port)
         {
@@ -34,6 +34,16 @@ namespace WinuXGames.Sock.Editor.NodeSystem.Nodes.Core
             for (int i = 0; i < num + additional; i++) { sb.Append("    "); }
         }
 
+        protected void Disconnect(NodePort from, NodePort to, SockNode fromNode, SockNode toNode)
+        {
+            from.Disconnect(to);
+            to.Disconnect(from);
+
+            if (fromNode != null) { fromNode.LastValidNodeInfo = default; }
+
+            if (toNode != null) { toNode.LastValidNodeInfo = default; }
+        }
+
         public override void OnCreateConnection(NodePort from, NodePort to)
         {
             SockNode fromSockNode = from.node as SockNode;
@@ -42,26 +52,18 @@ namespace WinuXGames.Sock.Editor.NodeSystem.Nodes.Core
             // Don't allow non sock nodes to be connected to sock nodes
             if (fromSockNode == null || toSockNode == null)
             {
-                from.Disconnect(to);
+                Disconnect(from, to, fromSockNode, toSockNode);
                 Debug.LogError("You tried one of the nodes you tried to connect wasn't a sock node!");
                 return;
             }
 
-            void Disconnect() { from.Disconnect(to); }
 
             // Only allow sock nodes inside of DialogueGraphs
             DialogueGraph dialogueGraph = graph as DialogueGraph;
             if (dialogueGraph == null)
             {
-                Disconnect();
+                Disconnect(from, to, fromSockNode, toSockNode);
                 Debug.LogError("You can only use sock nodes inside of a DialogueGraph!");
-                return;
-            }
-
-            if (Looped)
-            {
-                Disconnect();
-                Looped = false;
                 return;
             }
 
@@ -70,7 +72,7 @@ namespace WinuXGames.Sock.Editor.NodeSystem.Nodes.Core
             {
                 if (!AllowedInputTypes.Contains(from.node.GetType()))
                 {
-                    Disconnect();
+                    Disconnect(from, to, fromSockNode, toSockNode);
                     Debug.LogWarning($"You can't connect {from.node.GetType().Name} to {to.node.GetType().Name}!");
                     Debug.LogWarning("You can check which nodes can be connected to each other in the docs");
                     return;
@@ -82,9 +84,10 @@ namespace WinuXGames.Sock.Editor.NodeSystem.Nodes.Core
             // Ignore Start Nodes for loop check
             if (fromSockNode as StartNode != null) { return; }
 
-            NodePort        connectedTo = to;
-            Stack<NodePort> openPaths   = new Stack<NodePort>();
-            bool            stop        = false;
+            NodePort        connectedTo  = to;
+            Stack<NodePort> openPaths    = new Stack<NodePort>();
+            bool            stop         = false;
+            bool            disconnected = false;
 
             void Pop()
             {
@@ -97,7 +100,8 @@ namespace WinuXGames.Sock.Editor.NodeSystem.Nodes.Core
                 if (connectedTo.node.GetInstanceID() == from.node.GetInstanceID())
                 {
                     Debug.LogError("Loop detected, disconnected affected nodes!");
-                    Disconnect();
+                    Disconnect(from, to, fromSockNode, toSockNode);
+                    disconnected = true;
                     break;
                 }
 
@@ -125,10 +129,19 @@ namespace WinuXGames.Sock.Editor.NodeSystem.Nodes.Core
                 iterationLimit--;
             }
 
+            if (disconnected) { return; }
+
             if (iterationLimit == 0) { Debug.LogError("Iteration limit of loop checker has been reached! The node tree is either too big or an unexpected bug occured"); }
+
+            GetValue(null);
         }
 
-        public override void OnRemoveConnection(NodePort port) { LastValidNodeInfo = default; }
+
+        public override void OnRemoveConnection(NodePort port)
+        {
+            if (GetInputPort(InputFieldName).ConnectionCount == 0) { LastValidNodeInfo = default; }
+        }
+       
 
         protected virtual int GetIndent()
         {
@@ -136,7 +149,7 @@ namespace WinuXGames.Sock.Editor.NodeSystem.Nodes.Core
             return nodeInfos.Length > 1 ? GetProcessedValue().Indent : nodeInfos[0].Indent;
         }
 
-        private NodeInfo GetProcessedValue() => GetValue(null) is NodeInfo ? (NodeInfo)GetValue(null) : default;
+        public NodeInfo GetProcessedValue() => GetValue(null) is NodeInfo ? (NodeInfo)GetValue(null) : default;
 
         protected override void Init()
         {

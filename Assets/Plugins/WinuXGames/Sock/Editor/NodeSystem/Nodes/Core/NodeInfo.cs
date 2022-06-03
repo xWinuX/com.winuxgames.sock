@@ -27,7 +27,5 @@ namespace WinuXGames.Sock.Editor.NodeSystem.Nodes.Core
         public Type      SourceType => _sourceType;
         public int       Indent     => _indent;
         public string    Identifier => _identifier;
-
-        public bool CanConnectTo(NodeInfo other) => !StartNode.Equals(other.StartNode) && Indent == other.Indent;
     }
 }

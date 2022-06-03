@@ -16,7 +16,6 @@ namespace WinuXGames.Sock.Editor.CustomEditors.Graphs
         {
             if (_dialogueGraph == null) { _dialogueGraph = target as DialogueGraph; }
 
-            
             if (GUILayout.Button("Export", GUILayout.MaxWidth(100)))
             {
                 string exportedYarn = DialogueGraphToYarnBuilder.Build(_dialogueGraph);

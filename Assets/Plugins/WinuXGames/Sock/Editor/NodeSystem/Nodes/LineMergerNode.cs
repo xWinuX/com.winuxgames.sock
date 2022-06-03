@@ -7,7 +7,6 @@ using XNode;
 
 namespace WinuXGames.Sock.Editor.NodeSystem.Nodes
 {
-    [NodeWidth(100)]
     [CreateNodeMenu("Dialogue/Line Merger", 2)]
     public class LineMergerNode : MultiInputNode
     {
@@ -16,7 +15,7 @@ namespace WinuXGames.Sock.Editor.NodeSystem.Nodes
         [SerializeField]
         [Output(typeConstraint = TypeConstraint.Strict, connectionType = ConnectionType.Override)]
         private NodeInfo _out;
-
+        
         public override string Name => "Line Merger";
 
         public override Type[] AllowedInputTypes { get; } = { typeof(LineNode) };
@@ -28,8 +27,8 @@ namespace WinuXGames.Sock.Editor.NodeSystem.Nodes
             NodeInfo[] infos = GetInputValues(InputFieldName, NodeInfo.ErrorNodeInfo);
 
             int    lowestIndent = infos.Min(nodeInfo => nodeInfo.Indent) - 1;
-            int    minLength    = infos.Min(nodeInfo=>nodeInfo.Identifier.Length); // this gets you the shortest length of all elements in names
-            string shortest     = infos.FirstOrDefault(nodeInfo=>nodeInfo.Identifier.Length == minLength).Identifier;
+            int    minLength    = infos.Min(nodeInfo => nodeInfo.Identifier.Length); // this gets you the shortest length of all elements in names
+            string shortest     = infos.FirstOrDefault(nodeInfo => nodeInfo.Identifier.Length == minLength).Identifier;
 
             LastValidNodeInfo = new NodeInfo(typeof(LineMergerNode), infos[0].StartNode, lowestIndent, shortest);
             return LastValidNodeInfo;

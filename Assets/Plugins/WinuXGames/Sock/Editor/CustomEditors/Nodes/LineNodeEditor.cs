@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using WinuXGames.Sock.Editor.NodeSystem.Nodes;
 using WinuXGames.Sock.Editor.NodeSystem.Utility;
+using WinuXGames.Sock.Editor.Settings;
 using XNodeEditor;
 
 namespace WinuXGames.Sock.Editor.CustomEditors.Nodes
@@ -8,6 +9,8 @@ namespace WinuXGames.Sock.Editor.CustomEditors.Nodes
     [CustomNodeEditor(typeof(LineNode))]
     public class LineNodeEditor : SockNodeEditor<LineNode>
     {
+        protected override SockNodeSettings Settings { get; } = SockSettings.GetSettings().NodeSettings.LineNodeSettings;
+        
         public override void OnHeaderGUI()
         {
             if (TargetNode == null) { return; }
@@ -25,7 +28,5 @@ namespace WinuXGames.Sock.Editor.CustomEditors.Nodes
 
             NodeEditorGUILayout.PropertyField(serializedObject.FindProperty("_text"), GUIContent.none);
         }
-        
-        public override Color GetTint() => NodeColor.LineNodeColor;
     }
 }

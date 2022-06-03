@@ -29,7 +29,6 @@ namespace WinuXGames.Sock.Editor.Builders
         private readonly Dictionary<string, Node>           _nodeLookup              = new Dictionary<string, Node>();
         private readonly Dictionary<string, List<NodePort>> _jumpLookup              = new Dictionary<string, List<NodePort>>();
         private readonly Dictionary<Node, StringInfo>       _nodeStringInfoLookup    = new Dictionary<Node, StringInfo>();
-        private readonly List<Node>                         _nodesWithPositionTag    = new List<Node>();
         private readonly List<Node>                         _nodesWithoutPositionTag = new List<Node>();
         private          DialogueGraph                      _dialogueGraph;
         private          Vector2                            _nodeCursor;
@@ -223,78 +222,90 @@ namespace WinuXGames.Sock.Editor.Builders
                     iterationLimit--;
                 }
 
-                foreach (LineMergerNode lineMergerNode in lineMergers)
-                {
-                    Vector2 position = lineMergerNode.position;
+                if (iterationLimit == 0) { throw new OverflowException("Iteration limit has been reached, the yarn file is either invalid or too big"); }
 
-                    NodePort lineMergerInput = lineMergerNode.GetInputPort(SockNode.InputFieldName);
-                    foreach (Vector2 inputPosition in lineMergerInput.GetConnections().Select(nodePort => nodePort.node.position))
-                    {
-                        if (inputPosition.x > position.x) { position.x = inputPosition.x; }
-
-                        if (inputPosition.y < position.y) { position.y = inputPosition.y; }
-                    }
-
-                    if (_nodesWithoutPositionTag.Contains(lineMergerNode))
-                    {
-                        _nodeCursor             = new Vector2(Mathf.Floor(position.x / Spacing.x), Mathf.Floor(position.y / Spacing.y));
-                        lineMergerNode.position = GetPositionFromNodeCursor();
-                    }
-
-                    NodePort connectedTo = lineMergerNode.GetOutputPort(LineMergerNode.OutputFieldName);
-                    openPaths.Clear();
-                    stop = false;
-
-                    void Pop()
-                    {
-                        if (!openPaths.TryPop(out OpenPathInfo openPathInfo))
-                        {
-                            stop = true;
-                            return;
-                        }
-
-                        connectedTo = openPathInfo.NodePort;
-
-                        _nodeCursor = openPathInfo.NodeCursor;
-                    }
-
-                    iterationLimit = SockConstants.IterationLimit;
-                    while (!stop && iterationLimit > 0)
-                    {
-                        connectedTo.node.position = GetPositionFromNodeCursor();
-                        ModifyNodeCursor(new Vector2(1, 0));
-                        if (connectedTo.node is OptionNode optionNode)
-                        {
-                            foreach (NodePort optionNodeDynamicOutput in optionNode.DynamicOutputs)
-                            {
-                                openPaths.Push(new OpenPathInfo(optionNodeDynamicOutput, _nodeCursor));
-                                ModifyNodeCursor(new Vector2(0, 1));
-                            }
-
-                            Pop();
-                            break;
-                        }
-
-                        NodePort nodePort = connectedTo.node.Outputs.First();
-                        if (nodePort == null || nodePort.ConnectionCount == 0)
-                        {
-                            Pop();
-                            break;
-                        }
-
-                        connectedTo = nodePort.GetConnection(0);
-
-                        iterationLimit--;
-                    }
-
-                    if (iterationLimit == 0) { Debug.LogError("Iteration limit of loop checker has been reached! The node tree is either too big or an unexpected bug occured"); }
-                }
-
-                if (iterationLimit == 0) { throw new OverflowException("There appears to be a circular reference inside the node tree"); }
+                PositionLineMergersAndChildren(lineMergers, openPaths);
             }
 
             _dialogueGraph.Ready = true;
             return _dialogueGraph;
+        }
+
+        private void PositionLineMergersAndChildren(List<LineMergerNode> lineMergers, Stack<OpenPathInfo> openPaths)
+        {
+            foreach (LineMergerNode lineMergerNode in lineMergers)
+            {
+                Vector2 position = new Vector2(float.MinValue, float.MaxValue);
+
+                NodePort lineMergerInput = lineMergerNode.GetInputPort(SockNode.InputFieldName);
+                foreach (Vector2 inputPosition in lineMergerInput.GetConnections().Select(nodePort => nodePort.node.position))
+                {
+                    if (inputPosition.x > position.x) { position.x = inputPosition.x; }
+
+                    if (inputPosition.y < position.y) { position.y = inputPosition.y; }
+                }
+
+                // Only position line mergers without a position tag
+                if (_nodesWithoutPositionTag.Contains(lineMergerNode))
+                {
+                    _nodeCursor             = new Vector2(Mathf.Floor(position.x / Spacing.x), Mathf.Floor(position.y / Spacing.y));
+                    lineMergerNode.position = GetPositionFromNodeCursor();
+                }
+
+                NodePort connectedTo = lineMergerNode.GetOutputPort(LineMergerNode.OutputFieldName);
+                openPaths.Clear();
+                bool stop = false;
+
+                void Pop()
+                {
+                    if (!openPaths.TryPop(out OpenPathInfo openPathInfo))
+                    {
+                        stop = true;
+                        return;
+                    }
+
+                    connectedTo = openPathInfo.NodePort;
+
+                    _nodeCursor = openPathInfo.NodeCursor;
+                }
+
+                int iterationLimit = SockConstants.IterationLimit;
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalse (it just lies, stop is being set in the Pop method)
+                while (!stop && iterationLimit > 0)
+                {
+                    // Only position nodes without a position tag
+                    if (_nodesWithoutPositionTag.Contains(connectedTo.node))
+                    {
+                        ModifyNodeCursor(new Vector2(1, 0));
+                        connectedTo.node.position = GetPositionFromNodeCursor();
+                    }
+
+                    if (connectedTo.node is OptionNode optionNode)
+                    {
+                        foreach (NodePort optionNodeDynamicOutput in optionNode.DynamicOutputs)
+                        {
+                            openPaths.Push(new OpenPathInfo(optionNodeDynamicOutput, _nodeCursor));
+                            ModifyNodeCursor(new Vector2(0, 1));
+                        }
+
+                        Pop();
+                        break;
+                    }
+
+                    NodePort nodePort = connectedTo.node.Outputs.First();
+                    if (nodePort == null || nodePort.ConnectionCount == 0)
+                    {
+                        Pop();
+                        break;
+                    }
+
+                    connectedTo = nodePort.GetConnection(0);
+
+                    iterationLimit--;
+                }
+
+                if (iterationLimit == 0) { throw new OverflowException("There appears to be a circular reference inside the node tree"); }
+            }
         }
 
         private void ResetState()
@@ -302,7 +313,7 @@ namespace WinuXGames.Sock.Editor.Builders
             _nodeLookup.Clear();
             _jumpLookup.Clear();
             _nodeStringInfoLookup.Clear();
-            _nodesWithPositionTag.Clear();
+
             _nodesWithoutPositionTag.Clear();
             _nodeCursor    = Vector2.zero;
             _nodeCursorMax = Vector2.zero;
@@ -329,8 +340,7 @@ namespace WinuXGames.Sock.Editor.Builders
             node          = ScriptableObject.CreateInstance<T>();
             node.position = GetNodePositionFromStringInfo(stringInfo, out bool hasTag, positionTagFilter);
 
-            if (hasTag) { _nodesWithPositionTag.Add(node); }
-            else { _nodesWithoutPositionTag.Add(node); }
+            if (!hasTag) { _nodesWithoutPositionTag.Add(node); }
 
             _nodeStringInfoLookup.Add(node, stringInfo);
 
@@ -391,6 +401,7 @@ namespace WinuXGames.Sock.Editor.Builders
             _nodeCursor += vector2;
 
             if (_nodeCursor.x > _nodeCursorMax.x) { _nodeCursorMax.x = _nodeCursor.x; }
+
             if (_nodeCursor.y > _nodeCursorMax.y) { _nodeCursorMax.y = _nodeCursor.y; }
         }
 

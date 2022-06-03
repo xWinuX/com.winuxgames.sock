@@ -8,7 +8,6 @@ using XNode;
 
 namespace WinuXGames.Sock.Editor.NodeSystem.Nodes
 {
-    [NodeWidth(300)]
     [CreateNodeMenu("Dialogue/Start", 3)]
     public class StartNode : MultiInputNode
     {

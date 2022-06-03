@@ -5,7 +5,7 @@ using UnityEngine;
 using WinuXGames.Sock.Editor.Extensions;
 using WinuXGames.Sock.Editor.NodeSystem.Nodes;
 using WinuXGames.Sock.Editor.NodeSystem.Nodes.Core;
-using WinuXGames.Sock.Editor.NodeSystem.Utility;
+using WinuXGames.Sock.Editor.Settings;
 using XNode;
 using XNodeEditor;
 
@@ -20,6 +20,9 @@ namespace WinuXGames.Sock.Editor.CustomEditors.Nodes
 
         private readonly GUIStyle _headerStyle = new GUIStyle(NodeEditorResources.styles.nodeHeader);
 
+        protected override SockNodeSettings Settings { get; } = SockSettings.GetSettings().NodeSettings.OptionNodeSettings;
+
+        
         public override void OnHeaderGUI()
         {
             _headerStyle.normal.textColor = _hasOutputError ? Color.red : NodeEditorResources.styles.nodeHeader.normal.textColor;
@@ -79,6 +82,7 @@ namespace WinuXGames.Sock.Editor.CustomEditors.Nodes
             TargetNode.OptionStringList[index] = EditorGUI.TextField(rect, TargetNode.OptionStringList[index]);
 
             NodePort port = TargetNode.GetPort(OptionNode.OutputFieldName + " " + index);
+            if (port == null) { return; }
 
             rect.width += NodeEditorWindow.current.graphEditor.GetPortStyle(port).padding.right;
             rect.width += NodeEditorWindow.current.graphEditor.GetPortStyle(port).margin.right;
@@ -94,6 +98,8 @@ namespace WinuXGames.Sock.Editor.CustomEditors.Nodes
 
         private void OnListOnReorderCallback(ReorderableList reorderableList)
         {
+            if (TargetNode == null) { return; }
+
             // Move up
             if (reorderableList.index > _selectIndex)
             {
@@ -107,19 +113,21 @@ namespace WinuXGames.Sock.Editor.CustomEditors.Nodes
             serializedObject.ApplyModifiedProperties();
             serializedObject.Update();
         }
-        
+
         public override Color GetTint()
         {
+            Color baseColor = base.GetTint();
+
             if (TargetNode == null) { return Color.magenta; }
 
             if (TargetNode.DynamicOutputs.Any(targetNodeDynamicOutput => targetNodeDynamicOutput.ConnectionCount == 0))
             {
                 _hasOutputError = true;
-                return NodeColor.OptionNodeColor * 0.5f;
+                return baseColor * 0.5f;
             }
 
             _hasOutputError = false;
-            return NodeColor.OptionNodeColor;
+            return baseColor;
         }
     }
 }
