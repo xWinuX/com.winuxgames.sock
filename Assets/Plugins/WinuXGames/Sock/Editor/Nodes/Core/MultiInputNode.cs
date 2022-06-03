@@ -1,20 +1,20 @@
 ﻿using UnityEngine;
 using XNode;
 
-namespace WinuXGames.Sock.Editor.NodeSystem.Nodes.Core
+namespace WinuXGames.Sock.Editor.Nodes.Core
 {
-    public abstract class MultiInputNode : SockNode
+    internal abstract class MultiInputNode : SockNode
     {
         [SerializeField]
         [Input(typeConstraint = TypeConstraint.Strict, connectionType = ConnectionType.Multiple)]
         private NodeInfo _in;
 
-        public NodeInfo In => _in;
-        
         [SerializeField]
         [HideInInspector]
         private StartNode _startNode;
-        
+
+        public NodeInfo In => _in;
+
         public override void OnCreateConnection(NodePort from, NodePort to)
         {
             base.OnCreateConnection(from, to);

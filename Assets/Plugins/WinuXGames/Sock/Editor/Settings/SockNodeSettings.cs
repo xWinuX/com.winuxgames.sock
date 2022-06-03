@@ -4,7 +4,7 @@ using UnityEngine;
 namespace WinuXGames.Sock.Editor.Settings
 {
     [Serializable]
-    public class SockNodeSettings
+    internal class SockNodeSettings
     {
         [SerializeField] private Color _color;
         [SerializeField] private int   _width;

@@ -1,17 +1,17 @@
 using System;
 using System.Text;
 using UnityEngine;
-using WinuXGames.Sock.Editor.NodeSystem.Nodes.Core;
+using WinuXGames.Sock.Editor.Nodes.Core;
 using WinuXGames.Sock.Editor.Utility;
 using XNode;
 
-namespace WinuXGames.Sock.Editor.NodeSystem.Nodes
+namespace WinuXGames.Sock.Editor.Nodes
 {
     [CreateNodeMenu("Dialogue/Line", 0)]
-    public class LineNode : SingleInputNode
+    internal class LineNode : SingleInputNode
     {
         public const string OutputFieldName = nameof(_out);
-        
+
         [SerializeField]
         [Output(connectionType = ConnectionType.Override)]
         private NodeInfo _out;
@@ -25,7 +25,7 @@ namespace WinuXGames.Sock.Editor.NodeSystem.Nodes
         public string Character { get => _character; set => _character = value; }
 
         public string Text { get => _text; set => _text = value; }
-        
+
         public override string Name => "Line";
 
         public override Type[] AllowedInputTypes { get; } =

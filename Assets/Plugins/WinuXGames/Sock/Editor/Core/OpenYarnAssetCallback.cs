@@ -1,14 +1,14 @@
 using UnityEditor;
 using WinuXGames.Sock.Editor.Builders;
-using WinuXGames.Sock.Editor.NodeSystem.NodeGraphs;
+using WinuXGames.Sock.Editor.NodeGraphs;
 using XNodeEditor;
 
-namespace WinuXGames.Sock.Editor
+namespace WinuXGames.Sock.Editor.Core
 {
     public static class OpenYarnAssetCallback
     {
         [UnityEditor.Callbacks.OnOpenAsset(1)]
-        public static bool OnOpenYarnAsset(int instanceID, int line)
+        private static bool OnOpenYarnAsset(int instanceID, int line)
         {
             if (Selection.activeObject == null) { return false; }
 

@@ -1,33 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using UnityEngine;
-using WinuXGames.Sock.Editor.NodeSystem.NodeGraphs;
-using WinuXGames.Sock.Editor.NodeSystem.Nodes;
-using WinuXGames.Sock.Editor.NodeSystem.Nodes.Core;
+using WinuXGames.Sock.Editor.NodeGraphs;
+using WinuXGames.Sock.Editor.Nodes;
+using WinuXGames.Sock.Editor.Nodes.Core;
 using WinuXGames.Sock.Editor.Utility;
 using XNode;
 
 namespace WinuXGames.Sock.Editor.Builders
 {
-    public static class DialogueGraphToYarnBuilder
+    internal static class DialogueGraphToYarnBuilder
     {
-        private class OpenPathInfo
-        {
-            public OpenPathInfo(SockNode node, NodePort nodePort, int index, bool lastInPath)
-            {
-                NodePort   = nodePort;
-                Index      = index;
-                Node       = node;
-                LastInPath = lastInPath;
-            }
-
-            public SockNode Node       { get; }
-            public NodePort NodePort   { get; }
-            public int      Index      { get; }
-            public bool     LastInPath { get; }
-        }
-
         public static string Build(DialogueGraph dialogueGraph, bool includeSockTags = true)
         {
             StringBuilder sb = new StringBuilder();
@@ -139,13 +122,29 @@ namespace WinuXGames.Sock.Editor.Builders
                             break;
 
                         case StopNode stopNode:
-                            if (stopNode.GetInputPort(SockNode.InputFieldName).ConnectionCount == 1 && openPathStack.Count != 0) { stopNode.GetText(sb); }
+                        {
+                            NodePort inputPort = stopNode.GetInputPort(SockNode.InputFieldName);
+                            
+                            // Only include tags if enabled and input node is not a start node (this only really happens when creating a new yarn file)
+                            if (includeSockTags && inputPort.GetConnection(0).node as StartNode == null)
+                            {
+                                string s = sb.ToString().TrimEnd();
+                                sb.Clear();
+                                sb.Append(s);
+                                sb.Append(' ');
+                                stopNode.AddPositionTag(sb, SockConstants.SockStopNodePositionTag);
+                                sb.AppendLine();
+                            }
+
+                            if (inputPort.ConnectionCount == 1)
+                            {
+                                if (openPathStack.Count != 0) { stopNode.GetText(sb); }
+                            }
 
                             StopCurrentExecutionPath();
                             break;
+                        }
                     }
-
-                    Debug.Log(iterationLimiter);
                     iterationLimiter--;
                 }
 
@@ -156,6 +155,23 @@ namespace WinuXGames.Sock.Editor.Builders
             }
 
             return sb.ToString();
+        }
+
+        private class OpenPathInfo
+        {
+            public int  Index      { get; }
+            public bool LastInPath { get; }
+
+            public SockNode Node     { get; }
+            public NodePort NodePort { get; }
+
+            public OpenPathInfo(SockNode node, NodePort nodePort, int index, bool lastInPath)
+            {
+                NodePort   = nodePort;
+                Index      = index;
+                Node       = node;
+                LastInPath = lastInPath;
+            }
         }
     }
 }

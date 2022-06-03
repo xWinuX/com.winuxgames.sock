@@ -5,9 +5,8 @@ using UnityEngine;
 using WinuXGames.Sock.Editor.Utility;
 using Yarn;
 using Yarn.Compiler;
-using Yarn.Unity;
 
-namespace WinuXGames.Sock.Editor
+namespace WinuXGames.Sock.Editor.Windows
 {
     public class DialoguePreviewWindow : EditorWindow
     {
@@ -17,7 +16,15 @@ namespace WinuXGames.Sock.Editor
 
         private void OnGUI() { _drawPreview?.Invoke(); }
 
-        public void StartPreview(string yarnString, string startNode)
+        internal static void ShowWindow(string yarnString, string startNode)
+        {
+            DialoguePreviewWindow window = CreateInstance<DialoguePreviewWindow>();
+            window.position = new Rect(0, 0, 400, 430);
+            window.StartPreview(yarnString, startNode);
+            window.Show();
+        }
+
+        private void StartPreview(string yarnString, string startNode)
         {
             _currentDialogue = new Dialogue(new MemoryVariableStore());
 
@@ -34,41 +41,24 @@ namespace WinuXGames.Sock.Editor
             _currentDialogue.OptionsHandler          += OptionsHandler;
 
             _currentDialogue.SetNode(startNode);
-
-            LocalizedLine localizedLine = new LocalizedLine();
         }
 
-        private void NodeCompleteHandler(string completedNodeName)
-        {
-            Debug.Log($"Completed Node {completedNodeName}");
-            _currentDialogue.Continue();
-        }
+        private void NodeCompleteHandler(string completedNodeName) { _currentDialogue.Continue(); }
 
-        private void CommandHandler(Command command)
-        {
-            Debug.Log("Command");
-            _currentDialogue.Continue();
-        }
+        private void CommandHandler(Command command) { _currentDialogue.Continue(); }
 
         private void DialogueCompleteHandler()
         {
-            Debug.Log("Dialogue Over!");
             _drawPreview = null;
             _currentDialogue.Stop();
             Close();
         }
 
-        private void NodeStartHandler(string startedNodeName)
-        {
-            Debug.Log($"Started Previewing {startedNodeName}");
-            _currentDialogue.Continue();
-        }
+        private void NodeStartHandler(string startedNodeName) { _currentDialogue.Continue(); }
 
         private void LineHandler(Line line)
         {
             string actualText = _currentStringTable[line.ID].text;
-            Debug.Log(actualText);
-
             _drawPreview = () =>
             {
                 GUILayout.Label(actualText);
@@ -84,12 +74,12 @@ namespace WinuXGames.Sock.Editor
                 {
                     OptionSet.Option option     = options.Options[i];
                     string           actualText = _currentStringTable[option.Line.ID].text;
-                    if (GUILayout.Button(actualText))
-                    {
-                        _currentDialogue.SetSelectedOption(i);
-                        _currentDialogue.Continue();
-                        break;
-                    }
+                    
+                    if (!GUILayout.Button(actualText)) { continue; }
+
+                    _currentDialogue.SetSelectedOption(i);
+                    _currentDialogue.Continue();
+                    break;
                 }
             };
         }

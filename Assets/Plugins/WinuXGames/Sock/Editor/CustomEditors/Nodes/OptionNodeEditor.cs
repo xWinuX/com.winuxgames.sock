@@ -2,9 +2,10 @@
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
+using WinuXGames.Sock.Editor.CustomEditors.Nodes.Core;
 using WinuXGames.Sock.Editor.Extensions;
-using WinuXGames.Sock.Editor.NodeSystem.Nodes;
-using WinuXGames.Sock.Editor.NodeSystem.Nodes.Core;
+using WinuXGames.Sock.Editor.Nodes;
+using WinuXGames.Sock.Editor.Nodes.Core;
 using WinuXGames.Sock.Editor.Settings;
 using XNode;
 using XNodeEditor;
@@ -12,17 +13,16 @@ using XNodeEditor;
 namespace WinuXGames.Sock.Editor.CustomEditors.Nodes
 {
     [CustomNodeEditor(typeof(OptionNode))]
-    public class OptionNodeEditor : SockNodeEditor<OptionNode>
+    internal class OptionNodeEditor : SockNodeEditor<OptionNode>
     {
-        private int    _selectIndex = -1;
-        private string _hoverText;
-        private bool   _hasOutputError;
-
-        private readonly GUIStyle _headerStyle = new GUIStyle(NodeEditorResources.styles.nodeHeader);
-
         protected override SockNodeSettings Settings { get; } = SockSettings.GetSettings().NodeSettings.OptionNodeSettings;
 
-        
+        private readonly GUIStyle _headerStyle = new GUIStyle(NodeEditorResources.styles.nodeHeader);
+        private          bool     _hasOutputError;
+        private          string   _hoverText;
+        private          int      _selectIndex = -1;
+
+
         public override void OnHeaderGUI()
         {
             _headerStyle.normal.textColor = _hasOutputError ? Color.red : NodeEditorResources.styles.nodeHeader.normal.textColor;
@@ -32,6 +32,22 @@ namespace WinuXGames.Sock.Editor.CustomEditors.Nodes
                 _headerStyle,
                 GUILayout.Height(30)
             );
+        }
+
+        public override Color GetTint()
+        {
+            Color baseColor = base.GetTint();
+
+            if (TargetNode == null) { return Color.magenta; }
+
+            if (TargetNode.DynamicOutputs.Any(targetNodeDynamicOutput => targetNodeDynamicOutput.ConnectionCount == 0))
+            {
+                _hasOutputError = true;
+                return baseColor * 0.5f;
+            }
+
+            _hasOutputError = false;
+            return baseColor;
         }
 
         protected override void DrawNode()
@@ -112,22 +128,6 @@ namespace WinuXGames.Sock.Editor.CustomEditors.Nodes
 
             serializedObject.ApplyModifiedProperties();
             serializedObject.Update();
-        }
-
-        public override Color GetTint()
-        {
-            Color baseColor = base.GetTint();
-
-            if (TargetNode == null) { return Color.magenta; }
-
-            if (TargetNode.DynamicOutputs.Any(targetNodeDynamicOutput => targetNodeDynamicOutput.ConnectionCount == 0))
-            {
-                _hasOutputError = true;
-                return baseColor * 0.5f;
-            }
-
-            _hasOutputError = false;
-            return baseColor;
         }
     }
 }

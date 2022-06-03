@@ -2,7 +2,7 @@
 
 namespace WinuXGames.Sock.Editor.Settings
 {
-    public static class SockSettings
+    internal static class SockSettings
     {
         public const string SourceSettingsPath         = "Assets/Plugins/WinuXGames/Sock/Settings";
         public const string SourceSockSettingsPath     = SourceSettingsPath + "/_SockSettings.asset";
@@ -14,14 +14,22 @@ namespace WinuXGames.Sock.Editor.Settings
 
         private static SO_SockSettings _sockSettings;
 
-        public static void ResetSettings()
+        public static void ResetGraphSettings()
+        {
+            SO_SockSettings source = AssetDatabase.LoadAssetAtPath<SO_SockSettings>(SourceSockSettingsPath);
+            SO_SockSettings copy   = AssetDatabase.LoadAssetAtPath<SO_SockSettings>(CopySockSettingsPath);
+
+            copy.ReplaceValuesWith(source);
+        }
+
+        public static void ResetNodeSettings()
         {
             SO_SockNodeSettings source = AssetDatabase.LoadAssetAtPath<SO_SockNodeSettings>(SourceSockNodeSettingsPath);
             SO_SockNodeSettings copy = AssetDatabase.LoadAssetAtPath<SO_SockNodeSettings>(CopySockNodeSettingsPath);
 
             copy.ReplaceValuesWith(source);
         }
-        
+
         public static SO_SockSettings GetSettings()
         {
             if (_sockSettings == null)

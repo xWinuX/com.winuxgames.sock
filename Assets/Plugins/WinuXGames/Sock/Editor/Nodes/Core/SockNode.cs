@@ -4,20 +4,19 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-using WinuXGames.Sock.Editor.NodeSystem.NodeGraphs;
+using WinuXGames.Sock.Editor.NodeGraphs;
 using WinuXGames.Sock.Editor.Utility;
 using XNode;
 
-namespace WinuXGames.Sock.Editor.NodeSystem.Nodes.Core
+namespace WinuXGames.Sock.Editor.Nodes.Core
 {
-    public abstract class SockNode : Node
+    internal abstract class SockNode : Node
     {
         public const string InputFieldName = "_in";
 
         public virtual string Name              => "Default";
         public virtual Type[] AllowedInputTypes => Type.EmptyTypes;
 
-        public bool     Looped            { get; set; }
         public NodeInfo LastValidNodeInfo { get; protected set; }
 
         public override object GetValue(NodePort port)
@@ -147,7 +146,7 @@ namespace WinuXGames.Sock.Editor.NodeSystem.Nodes.Core
         {
             if (GetInputPort(InputFieldName).ConnectionCount == 0) { LastValidNodeInfo = default; }
         }
-       
+
 
         protected virtual int GetIndent()
         {

@@ -1,16 +1,16 @@
 ﻿using UnityEngine;
 using XNode;
 
-namespace WinuXGames.Sock.Editor.NodeSystem.Nodes.Core
+namespace WinuXGames.Sock.Editor.Nodes.Core
 {
-    public abstract class SingleInputNode : SockNode
+    internal abstract class SingleInputNode : SockNode
     {
         [SerializeField]
         [Input(typeConstraint = TypeConstraint.Strict, connectionType = ConnectionType.Override)]
         private NodeInfo _in;
 
         public NodeInfo In => _in;
-        
+
         public override void OnCreateConnection(NodePort from, NodePort to)
         {
             base.OnCreateConnection(from, to);
@@ -32,11 +32,8 @@ namespace WinuXGames.Sock.Editor.NodeSystem.Nodes.Core
             NodeInfo toInfo   = toSockNode.LastValidNodeInfo;
             if (fromInfo.StartNode != null && toInfo.StartNode != null)
             {
-                Debug.Log(fromInfo.StartNode.GetInstanceID());
-                Debug.Log(toInfo.StartNode.GetInstanceID());
                 if (!fromInfo.StartNode.Equals(toInfo.StartNode))
                 {
-                    toSockNode.Looped = true;
                     Disconnect(from, to, fromSockNode, toSockNode);
                     Debug.LogError("You can't connect nodes with different start nodes together!");
                     Debug.LogError("You can however connect nodes to the input of start nodes to execute a jump");

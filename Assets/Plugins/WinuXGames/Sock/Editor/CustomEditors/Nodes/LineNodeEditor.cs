@@ -1,15 +1,16 @@
 ﻿using UnityEngine;
-using WinuXGames.Sock.Editor.NodeSystem.Nodes;
+using WinuXGames.Sock.Editor.CustomEditors.Nodes.Core;
+using WinuXGames.Sock.Editor.Nodes;
 using WinuXGames.Sock.Editor.Settings;
 using XNodeEditor;
 
 namespace WinuXGames.Sock.Editor.CustomEditors.Nodes
 {
     [CustomNodeEditor(typeof(LineNode))]
-    public class LineNodeEditor : SockNodeEditor<LineNode>
+    internal class LineNodeEditor : SockNodeEditor<LineNode>
     {
         protected override SockNodeSettings Settings { get; } = SockSettings.GetSettings().NodeSettings.LineNodeSettings;
-        
+
         public override void OnHeaderGUI()
         {
             if (TargetNode == null) { return; }

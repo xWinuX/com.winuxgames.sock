@@ -36,8 +36,8 @@ MonoBehaviour:
     values:
     - _fieldName: _in
       _node: {fileID: 602630432327981897}
-      _typeQualifiedName: WinuXGames.Sock.Editor.NodeSystem.Nodes.Core.NodeInfo,
-        com.winuxgames.sock, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      _typeQualifiedName: WinuXGames.Sock.Editor.Nodes.Core.NodeInfo, com.winuxgames.sock,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
       connections: []
       _direction: 0
       _connectionType: 1
@@ -45,8 +45,8 @@ MonoBehaviour:
       _dynamic: 0
     - _fieldName: _out
       _node: {fileID: 602630432327981897}
-      _typeQualifiedName: WinuXGames.Sock.Editor.NodeSystem.Nodes.Core.NodeInfo,
-        com.winuxgames.sock, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      _typeQualifiedName: WinuXGames.Sock.Editor.Nodes.Core.NodeInfo, com.winuxgames.sock,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
       connections: []
       _direction: 1
       _connectionType: 1
@@ -83,8 +83,8 @@ MonoBehaviour:
     values:
     - _fieldName: _in
       _node: {fileID: 3636577361653273338}
-      _typeQualifiedName: WinuXGames.Sock.Editor.NodeSystem.Nodes.Core.NodeInfo,
-        com.winuxgames.sock, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      _typeQualifiedName: WinuXGames.Sock.Editor.Nodes.Core.NodeInfo, com.winuxgames.sock,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
       connections: []
       _direction: 0
       _connectionType: 1
@@ -92,8 +92,8 @@ MonoBehaviour:
       _dynamic: 0
     - _fieldName: _out
       _node: {fileID: 3636577361653273338}
-      _typeQualifiedName: WinuXGames.Sock.Editor.NodeSystem.Nodes.Core.NodeInfo,
-        com.winuxgames.sock, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      _typeQualifiedName: WinuXGames.Sock.Editor.Nodes.Core.NodeInfo, com.winuxgames.sock,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
       connections: []
       _direction: 1
       _connectionType: 1

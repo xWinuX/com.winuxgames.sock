@@ -1,23 +1,27 @@
 ﻿using System;
 using System.Text;
-using WinuXGames.Sock.Editor.NodeSystem.Nodes.Core;
+using WinuXGames.Sock.Editor.Nodes.Core;
 using XNode;
 
-namespace WinuXGames.Sock.Editor.NodeSystem.Nodes
+namespace WinuXGames.Sock.Editor.Nodes
 {
     [CreateNodeMenu("Dialogue/Stop", 4)]
-    public class StopNode : MultiInputNode
+    internal class StopNode : MultiInputNode
     {
         public override string Name => "Stop";
 
-        public override Type[] AllowedInputTypes { get; } = { typeof(LineNode) };
+        public override Type[] AllowedInputTypes { get; } =
+        {
+            typeof(LineNode), 
+            typeof(StartNode)
+        };
 
         public override object GetValue(NodePort port)
         {
             LastValidNodeInfo = GetInputValue<NodeInfo>(InputFieldName);
             return LastValidNodeInfo;
-        } 
-        
+        }
+
         public override void GetText(StringBuilder sb, int index = 0, bool includeSockTags = true)
         {
             base.GetText(sb, index, includeSockTags);

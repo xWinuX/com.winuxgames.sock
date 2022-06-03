@@ -12,4 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04f744346b0a410eb9f96c6477e16d5e, type: 3}
   m_Name: SockSettings
   m_EditorClassIdentifier: 
-  _nodeSettings: {fileID: 11400000, guid: 38d83b35767ef234a855f1b279158996, type: 2}
+  _connectionColor: {r: 0.46057317, g: 0.8490566, b: 0.6114427, a: 1}
+  _connectionStyle: 0
+  _nodeSettings: {fileID: 11400000, guid: 09dc1bfad23d34040a0171b9ae772fed, type: 2}

@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
-using WinuXGames.Sock.Editor.NodeSystem.Nodes.Core;
+using WinuXGames.Sock.Editor.Nodes.Core;
 using WinuXGames.Sock.Editor.Utility;
 using XNode;
 
-namespace WinuXGames.Sock.Editor.NodeSystem.Nodes
+namespace WinuXGames.Sock.Editor.Nodes
 {
     [CreateNodeMenu("Dialogue/Start", 3)]
-    public class StartNode : MultiInputNode
+    internal class StartNode : MultiInputNode
     {
         public const string OutputFieldName = nameof(_out);
         public const string TitleFieldName  = nameof(_title);
@@ -37,7 +37,7 @@ namespace WinuXGames.Sock.Editor.NodeSystem.Nodes
         {
             LastValidNodeInfo = new NodeInfo(typeof(StartNode), this, 0, "0");
             return LastValidNodeInfo;
-        } 
+        }
 
         protected override int GetIndent() => 0;
 

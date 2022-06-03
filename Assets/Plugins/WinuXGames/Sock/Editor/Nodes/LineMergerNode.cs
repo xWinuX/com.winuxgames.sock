@@ -2,20 +2,20 @@
 using System.Linq;
 using System.Text;
 using UnityEngine;
-using WinuXGames.Sock.Editor.NodeSystem.Nodes.Core;
+using WinuXGames.Sock.Editor.Nodes.Core;
 using XNode;
 
-namespace WinuXGames.Sock.Editor.NodeSystem.Nodes
+namespace WinuXGames.Sock.Editor.Nodes
 {
     [CreateNodeMenu("Dialogue/Line Merger", 2)]
-    public class LineMergerNode : MultiInputNode
+    internal class LineMergerNode : MultiInputNode
     {
         public const string OutputFieldName = nameof(_out);
 
         [SerializeField]
         [Output(typeConstraint = TypeConstraint.Strict, connectionType = ConnectionType.Override)]
         private NodeInfo _out;
-        
+
         public override string Name => "Line Merger";
 
         public override Type[] AllowedInputTypes { get; } = { typeof(LineNode) };

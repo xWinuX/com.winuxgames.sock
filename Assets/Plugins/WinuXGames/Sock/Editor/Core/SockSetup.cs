@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using WinuXGames.Sock.Editor.Settings;
 
-namespace WinuXGames.Sock.Editor
+namespace WinuXGames.Sock.Editor.Core
 {
     [InitializeOnLoad]
     public static class SockSetup
@@ -12,7 +12,7 @@ namespace WinuXGames.Sock.Editor
             "Assets/Plugins",
             "Assets/Plugins/WinuXGames",
             "Assets/Plugins/WinuXGames/SockSettings",
-            "Assets/Plugins/WinuXGames/SockSettings/NodeSettings",
+            "Assets/Plugins/WinuXGames/SockSettings/NodeSettings"
         };
 
         static SockSetup()

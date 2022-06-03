@@ -9,9 +9,9 @@ namespace WinuXGames.Sock.Editor.Utility
 {
     public static class YarnUtility
     {
-        private static readonly Dialogue     Dialogue = new Dialogue(new MemoryVariableStore());
+        private static readonly Dialogue          Dialogue = new Dialogue(new MemoryVariableStore());
         public static           MarkupParseResult ParseMarkup(string text) => Dialogue.ParseMarkup(text);
-        
+
         public static float GetPropertyNumberValue(IReadOnlyDictionary<string, MarkupValue> property, string key, float defaultValue = 0f)
         {
             if (!property.TryGetValue(key, out MarkupValue markupValue)) { return defaultValue; }
@@ -39,6 +39,13 @@ namespace WinuXGames.Sock.Editor.Utility
             return CompileYarn(compilationJob);
         }
 
+        public static int GetProgramCounterFromLabel(IReadOnlyDictionary<string, int> labels, string label)
+        {
+            if (labels.TryGetValue(label, out int programCounter)) { return programCounter; }
+
+            throw new IndexOutOfRangeException($"Label {label} Does not exist!");
+        }
+
         private static CompilationResult CompileYarn(CompilationJob compilationJob)
         {
             CompilationResult result;
@@ -51,13 +58,6 @@ namespace WinuXGames.Sock.Editor.Utility
             }
 
             return result;
-        }
-
-        public static int GetProgramCounterFromLabel(IReadOnlyDictionary<string, int> labels, string label)
-        {
-            if (labels.TryGetValue(label, out int programCounter)) { return programCounter; }
-
-            throw new IndexOutOfRangeException($"Label {label} Does not exist!");
         }
     }
 }

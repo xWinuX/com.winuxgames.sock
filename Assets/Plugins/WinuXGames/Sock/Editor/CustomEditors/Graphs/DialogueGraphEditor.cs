@@ -1,24 +1,29 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using WinuXGames.Sock.Editor.Builders;
-using WinuXGames.Sock.Editor.NodeSystem.NodeGraphs;
+using WinuXGames.Sock.Editor.NodeGraphs;
+using WinuXGames.Sock.Editor.Nodes;
 using WinuXGames.Sock.Editor.Settings;
+using WinuXGames.Sock.Editor.Windows;
 using XNodeEditor;
 
 namespace WinuXGames.Sock.Editor.CustomEditors.Graphs
 {
     [CustomNodeGraphEditor(typeof(DialogueGraph))]
-    public class DialogueGraphEditor : NodeGraphEditor
+    internal class DialogueGraphEditor : NodeGraphEditor
     {
         private DialogueGraph _dialogueGraph;
-
-        private string _previewNode = "Test";
 
         public override void OnGUI()
         {
             if (_dialogueGraph == null) { _dialogueGraph = target as DialogueGraph; }
+
+            // Reset prefs so it take the sock ones
+            NodeEditorPreferences.ResetPrefs();
 
             GUILayout.BeginHorizontal(EditorStyles.toolbar);
 
@@ -26,13 +31,22 @@ namespace WinuXGames.Sock.Editor.CustomEditors.Graphs
 
             if (GUILayout.Button("Save Without Sock Tags", EditorStyles.toolbarButton)) { SaveFile(false); }
 
-            if (GUILayout.Button("Preview", EditorStyles.toolbarButton))
+            if (EditorGUILayout.DropdownButton(new GUIContent("Preview", ""), FocusType.Passive, EditorStyles.toolbarButton))
             {
-                DialoguePreviewWindow previewWindow = ScriptableObject.CreateInstance<DialoguePreviewWindow>();
-                string                exportedYarn  = DialogueGraphToYarnBuilder.Build(_dialogueGraph, false);
+                GenericMenu menu = new GenericMenu();
 
-                previewWindow.Show();
-                previewWindow.StartPreview(exportedYarn, _previewNode);
+                IEnumerable<StartNode> startNodes = _dialogueGraph.nodes.OfType<StartNode>();
+
+                foreach (StartNode startNode in startNodes)
+                {
+                    menu.AddItem(new GUIContent(startNode.Title), false, _ =>
+                    {
+                        string                exportedYarn  = DialogueGraphToYarnBuilder.Build(_dialogueGraph, false);
+                        DialoguePreviewWindow.ShowWindow(exportedYarn, startNode.Title);
+                    }, null);
+                }
+                
+                menu.ShowAsContext();
             }
 
             GUILayout.FlexibleSpace();
@@ -41,6 +55,8 @@ namespace WinuXGames.Sock.Editor.CustomEditors.Graphs
 
             GUILayout.EndHorizontal();
         }
+
+        public override NodeEditorPreferences.Settings GetDefaultPreferences() => SockSettings.GetSettings().GetReferencedXNodeSettings();
 
         private void SaveFile(bool includeSockTags)
         {

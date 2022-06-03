@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using WinuXGames.Sock.Editor.NodeSystem.NodeGraphs;
-using WinuXGames.Sock.Editor.NodeSystem.Nodes;
-using WinuXGames.Sock.Editor.NodeSystem.Nodes.Core;
+using WinuXGames.Sock.Editor.NodeGraphs;
+using WinuXGames.Sock.Editor.Nodes;
+using WinuXGames.Sock.Editor.Nodes.Core;
 using WinuXGames.Sock.Editor.Utility;
 using XNode;
 using Yarn;
@@ -14,7 +14,7 @@ using Node = XNode.Node;
 
 namespace WinuXGames.Sock.Editor.Builders
 {
-    public class YarnToDialogueGraphBuilder
+    internal class YarnToDialogueGraphBuilder
     {
         /// <summary>
         /// Horizontal and vertical spacing between nodes automatically created nodes
@@ -26,13 +26,14 @@ namespace WinuXGames.Sock.Editor.Builders
         /// </summary>
         public Vector2 SpacingOffset { get; set; } = new Vector2(8, 8);
 
-        private readonly Dictionary<string, Node>           _nodeLookup              = new Dictionary<string, Node>();
         private readonly Dictionary<string, List<NodePort>> _jumpLookup              = new Dictionary<string, List<NodePort>>();
-        private readonly Dictionary<Node, StringInfo>       _nodeStringInfoLookup    = new Dictionary<Node, StringInfo>();
-        private readonly List<Node>                         _nodesWithoutPositionTag = new List<Node>();
-        private          DialogueGraph                      _dialogueGraph;
-        private          Vector2                            _nodeCursor;
-        private          Vector2                            _nodeCursorMax;
+
+        private readonly Dictionary<string, Node>     _nodeLookup              = new Dictionary<string, Node>();
+        private readonly Dictionary<Node, StringInfo> _nodeStringInfoLookup    = new Dictionary<Node, StringInfo>();
+        private readonly List<Node>                   _nodesWithoutPositionTag = new List<Node>();
+        private          DialogueGraph                _dialogueGraph;
+        private          Vector2                      _nodeCursor;
+        private          Vector2                      _nodeCursorMax;
 
         /// <summary>
         /// Build dialogue graph out of given yarn asset
@@ -91,7 +92,7 @@ namespace WinuXGames.Sock.Editor.Builders
                     Instruction  instruction = node.Instructions[programCounter];
                     OpenPathInfo openPathInfo;
 
-                    DebugInstruction(instruction, result.StringTable, programCounter);
+                    //DebugInstruction(instruction, result.StringTable, programCounter);
 
                     // Stops current execution path and checks if another can be started, if not end loop
                     void StopCurrentExecutionPath()
@@ -208,16 +209,33 @@ namespace WinuXGames.Sock.Editor.Builders
                             TryAddNode($"Stop_{node.Name}_{depth}", out StopNode stopNode);
                             currentOutput.Connect(stopNode.GetInputPort(SockNode.InputFieldName));
 
-                            if (currentOutput.node.position.x >= stopNode.position.x)
+                            NodePort input = stopNode.GetInputPort(SockNode.InputFieldName);
+
+                            for (int i = 0; i < input.ConnectionCount; i++)
                             {
-                                stopNode.position.x = currentOutput.node.position.x + Spacing.x;
+                                NodePort   connection = input.GetConnection(i);
+                                StringInfo stringInfo = _nodeStringInfoLookup[connection.node];
+                                Vector2    position   = GetNodePositionFromStringInfo(stringInfo, out bool tagWasFound, SockConstants.SockStopNodePositionTag);
+                                if (tagWasFound)
+                                {
+                                    stopNode.position = position;
+                                    _nodesWithoutPositionTag.Remove(stopNode);
+                                }
+                                else
+                                {
+                                    if (!_nodesWithoutPositionTag.Contains(stopNode))
+                                    {
+                                        _nodesWithoutPositionTag.Add(stopNode);
+                                    }
+                                }
                             }
-                            
-                            if (currentOutput.node.position.y > stopNode.position.y)
+
+                            if (_nodesWithoutPositionTag.Contains(stopNode))
                             {
-                                stopNode.position.y = currentOutput.node.position.y + Spacing.y;
+                                if (currentOutput.node.position.x >= stopNode.position.x) { stopNode.position.x = currentOutput.node.position.x + Spacing.x; }
+                                if (currentOutput.node.position.y > stopNode.position.y) { stopNode.position.y  = currentOutput.node.position.y + Spacing.y; }
                             }
-                            
+
                             StopCurrentExecutionPath();
                             break;
                         case Instruction.Types.OpCode.RunNode:
@@ -425,22 +443,6 @@ namespace WinuXGames.Sock.Editor.Builders
             if (_nodeCursor.y > _nodeCursorMax.y) { _nodeCursorMax.y = _nodeCursor.y; }
         }
 
-        private class OpenPathInfo
-        {
-            public OpenPathInfo(NodePort nodePort, Vector2 nodeCursor, int depth = 0, string label = "")
-            {
-                NodePort   = nodePort;
-                NodeCursor = nodeCursor;
-                Depth      = depth;
-                Label      = label;
-            }
-
-            public NodePort NodePort   { get; }
-            public Vector2  NodeCursor { get; set; }
-            public int      Depth      { get; }
-            public string   Label      { get; }
-        }
-
         private static void DebugLabels(Yarn.Node node)
         {
             Debug.Log("Labels:");
@@ -474,6 +476,23 @@ namespace WinuXGames.Sock.Editor.Builders
                         Debug.Log("--- Float Value: " + operand.FloatValue);
                         break;
                 }
+            }
+        }
+
+        private class OpenPathInfo
+        {
+            public int     Depth      { get; }
+            public string  Label      { get; }
+            public Vector2 NodeCursor { get; set; }
+
+            public NodePort NodePort   { get; }
+
+            public OpenPathInfo(NodePort nodePort, Vector2 nodeCursor, int depth = 0, string label = "")
+            {
+                NodePort   = nodePort;
+                NodeCursor = nodeCursor;
+                Depth      = depth;
+                Label      = label;
             }
         }
     }
