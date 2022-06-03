@@ -19,7 +19,7 @@ namespace WinuXGames.Sock.Editor.Builders
         /// <summary>
         /// Horizontal and vertical spacing between nodes automatically created nodes
         /// </summary>
-        public Vector2 Spacing { get; set; } = new Vector2(350, 150);
+        public Vector2 Spacing { get; set; } = new Vector2(350, 200);
 
         /// <summary>
         /// Offset is added each time a node is created (default is 8 on both axis zo align them to the xNode grid)
@@ -84,13 +84,14 @@ namespace WinuXGames.Sock.Editor.Builders
 
                 bool stop           = false;
                 int  programCounter = 0;
+                int  depth          = 0;
                 int  iterationLimit = SockConstants.IterationLimit;
                 while (iterationLimit > 0 && !stop)
                 {
                     Instruction  instruction = node.Instructions[programCounter];
                     OpenPathInfo openPathInfo;
 
-                    //DebugInstruction(instruction, result.StringTable, programCounter);
+                    DebugInstruction(instruction, result.StringTable, programCounter);
 
                     // Stops current execution path and checks if another can be started, if not end loop
                     void StopCurrentExecutionPath()
@@ -100,6 +101,7 @@ namespace WinuXGames.Sock.Editor.Builders
                             openPathInfo = openPaths.Pop();
 
                             currentOutput  = openPathInfo.NodePort;
+                            depth          = openPathInfo.Depth;
                             _nodeCursor    = openPathInfo.NodeCursor;
                             programCounter = YarnUtility.GetProgramCounterFromLabel(node.Labels, openPathInfo.Label);
                         }
@@ -183,28 +185,39 @@ namespace WinuXGames.Sock.Editor.Builders
 
                             // Add new option to option node and add the resulting output port to the open paths stack
                             NodePort dynamicOutput = currentOptionNode.AddOption(stringInfo.text);
-                            openPaths.Push(new OpenPathInfo(dynamicOutput, _nodeCursor, instruction.Operands[1].StringValue));
-
+                            openPaths.Push(new OpenPathInfo(dynamicOutput, _nodeCursor, depth+1, instruction.Operands[1].StringValue));
                             ModifyNodeCursor(new Vector2(0, 1));
+                            
                             programCounter++;
                             break;
                         }
                         case Instruction.Types.OpCode.ShowOptions:
                             currentOptionNode = null;
 
-                            openPathInfo = openPaths.Pop();
-
-                            currentOutput  = openPathInfo.NodePort;
-                            programCounter = YarnUtility.GetProgramCounterFromLabel(node.Labels, openPathInfo.Label);
+                            StopCurrentExecutionPath();
                             break;
                         case Instruction.Types.OpCode.PushString:
                             stringStack.Push(instruction.Operands[0].StringValue);
                             programCounter++;
                             break;
                         case Instruction.Types.OpCode.Pop:
+                            depth--;
                             programCounter++;
                             break;
                         case Instruction.Types.OpCode.Stop:
+                            TryAddNode($"Stop_{node.Name}_{depth}", out StopNode stopNode);
+                            currentOutput.Connect(stopNode.GetInputPort(SockNode.InputFieldName));
+
+                            if (currentOutput.node.position.x >= stopNode.position.x)
+                            {
+                                stopNode.position.x = currentOutput.node.position.x + Spacing.x;
+                            }
+                            
+                            if (currentOutput.node.position.y > stopNode.position.y)
+                            {
+                                stopNode.position.y = currentOutput.node.position.y + Spacing.y;
+                            }
+                            
                             StopCurrentExecutionPath();
                             break;
                         case Instruction.Types.OpCode.RunNode:
@@ -288,6 +301,12 @@ namespace WinuXGames.Sock.Editor.Builders
                             ModifyNodeCursor(new Vector2(0, 1));
                         }
 
+                        Pop();
+                        break;
+                    }
+
+                    if (!connectedTo.node.Outputs.Any())
+                    {
                         Pop();
                         break;
                     }
@@ -407,15 +426,17 @@ namespace WinuXGames.Sock.Editor.Builders
 
         private class OpenPathInfo
         {
-            public OpenPathInfo(NodePort nodePort, Vector2 nodeCursor, string label = "")
+            public OpenPathInfo(NodePort nodePort, Vector2 nodeCursor, int depth = 0, string label = "")
             {
                 NodePort   = nodePort;
                 NodeCursor = nodeCursor;
+                Depth      = depth;
                 Label      = label;
             }
 
             public NodePort NodePort   { get; }
             public Vector2  NodeCursor { get; set; }
+            public int      Depth      { get; }
             public string   Label      { get; }
         }
 

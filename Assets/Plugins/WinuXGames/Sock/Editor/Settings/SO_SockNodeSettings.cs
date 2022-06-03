@@ -11,11 +11,13 @@ namespace WinuXGames.Sock.Editor.Settings
         [SerializeField] private SockNodeSettings _optionNodeSettings;
         [SerializeField] private SockNodeSettings _startNodeSettings;
         [SerializeField] private SockNodeSettings _lineMergerNodeSettings;
+        [SerializeField] private SockNodeSettings _stopNodeSettings;
 
         public SockNodeSettings LineNodeSettings       => _lineNodeSettings;
         public SockNodeSettings OptionNodeSettings     => _optionNodeSettings;
         public SockNodeSettings StartNodeSettings      => _startNodeSettings;
         public SockNodeSettings LineMergerNodeSettings => _lineMergerNodeSettings;
+        public SockNodeSettings StopNodeSettings       => _stopNodeSettings;
 
         public void GetAllNodeSettings(Dictionary<string, SockNodeSettings> dictionary) 
         {
@@ -23,6 +25,7 @@ namespace WinuXGames.Sock.Editor.Settings
             dictionary.Add(ObjectNames.NicifyVariableName(nameof(OptionNodeSettings)), OptionNodeSettings);
             dictionary.Add(ObjectNames.NicifyVariableName(nameof(StartNodeSettings)), StartNodeSettings);
             dictionary.Add(ObjectNames.NicifyVariableName(nameof(LineMergerNodeSettings)), LineMergerNodeSettings);
+            dictionary.Add(ObjectNames.NicifyVariableName(nameof(StopNodeSettings)), StopNodeSettings);
         }
 
         public void ReplaceValuesWith(SO_SockNodeSettings sockNodeSettings)

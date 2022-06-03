@@ -7,12 +7,19 @@ Character: And Questions!
     ajskdasjldaskld
 -> Jump Options
     <<jump AnswerNode>>
+-> Just Stop
+    I will stop now
+    <<stop>>
 -> Option 1
     This is the reply after Option 1
     asdasdasdasdasdasdasd
     nested option
     -> Nested Option 1
         nested reply 1
+        jasdjasjdjasjd
+        <<stop>>
+    -> ajsdkasjkdajsjd
+        ghugahuga
     -> Nested Option 2
         nested reply 2
     Text after nested options
@@ -26,6 +33,13 @@ This is the answer Node
 -> Option 1
     This is the reply after Option 1
     asdasdasdasdasdasdasd
+-> Option 2
+    jasdjasjdjasjd
+    ajsdkasjkdajsjd
+-> Option 2
+    jasdjasjdjasjd
+    ajsdkasjkdajsjd
+    ajsdkasjkdajsjd
 -> Option 2
     jasdjasjdjasjd
     ajsdkasjkdajsjd

@@ -45,9 +45,9 @@ namespace WinuXGames.Sock.Editor.Builders
                 NodePort connectedTo  = output.GetConnection(0);
                 bool     isLastInPath = true;
 
-                bool stop             = false;
-                
-                void Pop()
+                bool stop = false;
+
+                void StopCurrentExecutionPath()
                 {
                     if (!openPathStack.TryPop(out OpenPathInfo info))
                     {
@@ -61,7 +61,7 @@ namespace WinuXGames.Sock.Editor.Builders
                     connectedTo  = info.NodePort;
                     isLastInPath = info.LastInPath;
                 }
-                
+
                 int iterationLimiter = SockConstants.IterationLimit;
                 while (iterationLimiter > 0 && !stop)
                 {
@@ -71,13 +71,14 @@ namespace WinuXGames.Sock.Editor.Builders
                         {
                             lineNode.GetText(sb, 0, includeSockTags);
                             NodePort lineNodeOutput = lineNode.GetOutputPort(LineNode.OutputFieldName);
-                            
+
                             // If this node has no output connection go to the next open path
                             if (lineNodeOutput.ConnectionCount == 0)
                             {
-                                Pop();
+                                StopCurrentExecutionPath();
                                 break;
                             }
+
                             connectedTo = lineNode.GetOutputPort(LineNode.OutputFieldName).GetConnection(0);
 
                             // Add line merger tag if sock tags are included
@@ -111,7 +112,7 @@ namespace WinuXGames.Sock.Editor.Builders
                                 openPathStack.Push(new OpenPathInfo(optionNode, connectedToPort, i, i == dynamicOutputs.Count - 1));
                             }
 
-                            Pop();
+                            StopCurrentExecutionPath();
                             break;
                         }
 
@@ -123,7 +124,7 @@ namespace WinuXGames.Sock.Editor.Builders
                                 openPathStack.Push(new OpenPathInfo(lineNodeMerger, connectedToPort, 0, true));
                             }
 
-                            Pop();
+                            StopCurrentExecutionPath();
                             break;
                         }
 
@@ -134,14 +135,20 @@ namespace WinuXGames.Sock.Editor.Builders
                             sb.Append(sNode.Title);
                             sb.Append(">>");
                             sb.AppendLine();
-                            Pop();
+                            StopCurrentExecutionPath();
+                            break;
+
+                        case StopNode stopNode:
+                            if (stopNode.GetInputPort(SockNode.InputFieldName).ConnectionCount == 1 && openPathStack.Count != 0) { stopNode.GetText(sb); }
+
+                            StopCurrentExecutionPath();
                             break;
                     }
 
                     Debug.Log(iterationLimiter);
                     iterationLimiter--;
                 }
-                
+
                 // Close Node
                 sb.Append("===");
                 sb.AppendLine();

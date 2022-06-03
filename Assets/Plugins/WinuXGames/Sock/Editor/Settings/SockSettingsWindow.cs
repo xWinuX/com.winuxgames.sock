@@ -17,7 +17,7 @@ namespace WinuXGames.Sock.Editor.Settings
         private GUIStyle _headerStyle;
 
         [MenuItem("WinuXGames/Sock/Settings")]
-        private static void ShowWindow() { GetWindowWithRect<SockSettingsWindow>(new Rect(0, 0, 400, 260)); }
+        public static void ShowWindow() { GetWindowWithRect<SockSettingsWindow>(new Rect(0, 0, 400, 300)); }
 
         private GUIStyle GetHeaderStyle() =>
             _headerStyle ??= new GUIStyle

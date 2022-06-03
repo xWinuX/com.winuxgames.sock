@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using WinuXGames.Sock.Editor.NodeSystem.Nodes;
-using WinuXGames.Sock.Editor.NodeSystem.Utility;
 using WinuXGames.Sock.Editor.Settings;
 using XNodeEditor;
 

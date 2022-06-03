@@ -20,7 +20,7 @@ namespace WinuXGames.Sock.Editor.NodeSystem.Nodes.Core
             base.OnCreateConnection(from, to);
 
             // Ignore for Start Node
-            if (GetType() == typeof(StartNode)) { return; }
+            if (GetType() == typeof(StartNode) || GetType() == typeof(StopNode)) { return; }
 
             if (GetInputPort(InputFieldName).ConnectionCount == 1) { _startNode = GetProcessedValue().StartNode; }
 

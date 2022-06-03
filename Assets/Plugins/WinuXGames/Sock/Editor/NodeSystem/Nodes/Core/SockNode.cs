@@ -113,6 +113,12 @@ namespace WinuXGames.Sock.Editor.NodeSystem.Nodes.Core
                         Pop();
                         break;
                     default:
+                        if (!connectedTo.node.Outputs.Any())
+                        {
+                            Pop();
+                            break;
+                        }
+                        
                         NodePort nodePort = connectedTo.node.Outputs.First();
                         if (nodePort == null || nodePort.ConnectionCount == 0)
                         {

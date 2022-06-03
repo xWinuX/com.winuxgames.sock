@@ -24,3 +24,6 @@ MonoBehaviour:
   _lineMergerNodeSettings:
     _color: {r: 0.60784316, g: 0.5372549, b: 0.14901961, a: 1}
     _width: 100
+  _stopNodeSettings:
+    _color: {r: 0.5943396, g: 0.26922417, b: 0.21026166, a: 1}
+    _width: 80
