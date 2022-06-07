@@ -5,6 +5,7 @@ using UnityEngine;
 using WinuXGames.Sock.Editor.NodeGraphs;
 using WinuXGames.Sock.Editor.Nodes;
 using WinuXGames.Sock.Editor.Nodes.Core;
+using WinuXGames.Sock.Editor.Settings;
 using WinuXGames.Sock.Editor.Utility;
 using XNode;
 using Yarn;
@@ -119,6 +120,7 @@ namespace WinuXGames.Sock.Editor.Builders
                             string     stringKey  = instruction.Operands[0].StringValue;
                             StringInfo stringInfo = result.StringTable[stringKey];
                             string     actualText = stringInfo.text;
+                            actualText = actualText.Replace(SockSettings.GetSettings().LineBreakReplacementString, Environment.NewLine);
                             if (TryAddNode(stringKey, out LineNode lineNode, stringInfo))
                             {
                                 // Parse text and look for character attribute and assign it to node if it's there

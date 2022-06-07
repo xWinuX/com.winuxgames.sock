@@ -6,6 +6,12 @@ namespace WinuXGames.Sock.Editor.Settings
     [Serializable]
     internal class SockNodeSettings
     {
+        public SockNodeSettings(Color color, int width)
+        {
+            _color = color;
+            _width = width;
+        }
+        
         [SerializeField] private Color _color;
         [SerializeField] private int   _width;
 

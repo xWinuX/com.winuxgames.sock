@@ -10,20 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 379cd6087e3448178280127a2e18503a, type: 3}
-  m_Name: NodeSettings
+  m_Name: Default
   m_EditorClassIdentifier: 
   _lineNodeSettings:
-    _color: {r: 0.60784316, g: 0.4392157, b: 0.1764706, a: 1}
+    _color: {r: 0.61, g: 0.44, b: 0.18, a: 1}
     _width: 300
   _optionNodeSettings:
-    _color: {r: 0.20784314, g: 0.41960785, b: 0.60784316, a: 1}
+    _color: {r: 0.21, g: 0.42, b: 0.61, a: 1}
     _width: 300
   _startNodeSettings:
-    _color: {r: 0.21960784, g: 0.60784316, b: 0.25882354, a: 1}
+    _color: {r: 0.22, g: 0.61, b: 0.26, a: 1}
     _width: 300
   _lineMergerNodeSettings:
-    _color: {r: 0.60784316, g: 0.5372549, b: 0.14901961, a: 1}
+    _color: {r: 0.61, g: 0.54, b: 0.15, a: 1}
     _width: 100
   _stopNodeSettings:
-    _color: {r: 0.5943396, g: 0.26922417, b: 0.21026166, a: 1}
+    _color: {r: 0.6, g: 0.27, b: 0.21, a: 1}
     _width: 80

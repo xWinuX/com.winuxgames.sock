@@ -1,7 +1,9 @@
 using System;
 using System.Text;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using WinuXGames.Sock.Editor.Nodes.Core;
+using WinuXGames.Sock.Editor.Settings;
 using WinuXGames.Sock.Editor.Utility;
 using XNode;
 
@@ -53,7 +55,9 @@ namespace WinuXGames.Sock.Editor.Nodes
                 sb.Append(": ");
             }
 
-            sb.Append(_text);
+            // https://stackoverflow.com/questions/238002/replace-line-breaks-in-a-string-c-sharp
+            string replaceLineBreaks = Regex.Replace(_text, @"\r\n?|\n", SockSettings.GetSettings().LineBreakReplacementString);
+            sb.Append(replaceLineBreaks);
 
             if (includeSockTags) { AddPositionTag(sb, SockConstants.SockPositionTag); }
 

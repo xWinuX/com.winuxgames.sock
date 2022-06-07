@@ -2,7 +2,7 @@ title: Start
 tags: 
 ---
 Character: This is a Test, everything[wait=0.5/] should[wait=0.5/] be[wait=0.5/] working[wait=0.5/] now
-Character: And Questions!
+Character: And Questions!/nasdasdasd/nasdasdasd/n
 -> Other Option
     Short path
 -> Jump Options
@@ -19,7 +19,7 @@ Character: And Questions!
         Next will stop
         <<stop>>
     -> Nested Option 1
-        Nested reply 1 
+        Nested reply 1
     -> Nested Option 2
         Nested reply 2
     Text after nested options

@@ -6,11 +6,11 @@ namespace WinuXGames.Sock.Editor.Settings
 {
     internal class SO_SockNodeSettings : ScriptableObject
     {
-        [SerializeField] private SockNodeSettings _lineNodeSettings;
-        [SerializeField] private SockNodeSettings _optionNodeSettings;
-        [SerializeField] private SockNodeSettings _startNodeSettings;
-        [SerializeField] private SockNodeSettings _lineMergerNodeSettings;
-        [SerializeField] private SockNodeSettings _stopNodeSettings;
+        [SerializeField] private SockNodeSettings _lineNodeSettings       = new SockNodeSettings(new Color(0.61f, 0.44f, 0.18f), 300);
+        [SerializeField] private SockNodeSettings _optionNodeSettings     = new SockNodeSettings(new Color(0.21f, 0.42f, 0.61f), 300);
+        [SerializeField] private SockNodeSettings _startNodeSettings      = new SockNodeSettings(new Color(0.22f, 0.61f, 0.26f), 300);
+        [SerializeField] private SockNodeSettings _lineMergerNodeSettings = new SockNodeSettings(new Color(0.61f, 0.54f, 0.15f), 100);
+        [SerializeField] private SockNodeSettings _stopNodeSettings       = new SockNodeSettings(new Color(0.6f, 0.27f, 0.21f), 80);
 
         public SockNodeSettings LineNodeSettings       => _lineNodeSettings;
         public SockNodeSettings OptionNodeSettings     => _optionNodeSettings;

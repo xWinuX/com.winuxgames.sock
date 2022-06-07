@@ -1,4 +1,5 @@
 ﻿using UnityEditor;
+using UnityEngine;
 using WinuXGames.Sock.Editor.Settings;
 
 namespace WinuXGames.Sock.Editor.Core
@@ -12,7 +13,6 @@ namespace WinuXGames.Sock.Editor.Core
             "Assets/Plugins",
             "Assets/Plugins/WinuXGames",
             "Assets/Plugins/WinuXGames/SockSettings",
-            "Assets/Plugins/WinuXGames/SockSettings/NodeSettings"
         };
 
         static SockSetup()
@@ -25,8 +25,12 @@ namespace WinuXGames.Sock.Editor.Core
                 AssetDatabase.CreateFolder(FoldersToCreate[i - 1], path.Split("/")[^1]);
             }
 
-            if (!System.IO.File.Exists(SockSettings.CopySockSettingsPath)) { AssetDatabase.CopyAsset(SockSettings.SourceSockSettingsPath, SockSettings.CopySockSettingsPath); }
-            if (!System.IO.File.Exists(SockSettings.CopySockNodeSettingsPath)) { AssetDatabase.CopyAsset(SockSettings.SourceSockNodeSettingsPath, SockSettings.CopySockNodeSettingsPath); }
+            if (!System.IO.File.Exists(SockSettings.SettingsPath))
+            {
+                SO_SockSettings sockSettings = ScriptableObject.CreateInstance<SO_SockSettings>();
+                AssetDatabase.CreateAsset(sockSettings, SockSettings.SettingsPath);
+                EditorUtility.SetDirty(sockSettings);
+            }
             
             AssetDatabase.Refresh();
             AssetDatabase.SaveAssets();
