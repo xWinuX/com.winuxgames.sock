@@ -28,13 +28,13 @@ namespace WinuXGames.Sock.Editor.Builders
         public Vector2 SpacingOffset { get; set; } = new Vector2(8, 8);
 
         private readonly Dictionary<string, List<NodePort>> _jumpLookup              = new Dictionary<string, List<NodePort>>();
+        private readonly Dictionary<string, Node>           _nodeLookup              = new Dictionary<string, Node>();
+        private readonly Dictionary<Node, StringInfo>       _nodeStringInfoLookup    = new Dictionary<Node, StringInfo>();
+        private readonly List<Node>                         _nodesWithoutPositionTag = new List<Node>();
 
-        private readonly Dictionary<string, Node>     _nodeLookup              = new Dictionary<string, Node>();
-        private readonly Dictionary<Node, StringInfo> _nodeStringInfoLookup    = new Dictionary<Node, StringInfo>();
-        private readonly List<Node>                   _nodesWithoutPositionTag = new List<Node>();
-        private          DialogueGraph                _dialogueGraph;
-        private          Vector2                      _nodeCursor;
-        private          Vector2                      _nodeCursorMax;
+        private DialogueGraph _dialogueGraph;
+        private Vector2       _nodeCursor;
+        private Vector2       _nodeCursorMax;
 
         /// <summary>
         /// Build dialogue graph out of given yarn asset
@@ -188,9 +188,9 @@ namespace WinuXGames.Sock.Editor.Builders
 
                             // Add new option to option node and add the resulting output port to the open paths stack
                             NodePort dynamicOutput = currentOptionNode.AddOption(stringInfo.text);
-                            openPaths.Push(new OpenPathInfo(dynamicOutput, _nodeCursor, depth+1, instruction.Operands[1].StringValue));
+                            openPaths.Push(new OpenPathInfo(dynamicOutput, _nodeCursor, depth + 1, instruction.Operands[1].StringValue));
                             ModifyNodeCursor(new Vector2(0, 1));
-                            
+
                             programCounter++;
                             break;
                         }
@@ -225,17 +225,15 @@ namespace WinuXGames.Sock.Editor.Builders
                                 }
                                 else
                                 {
-                                    if (!_nodesWithoutPositionTag.Contains(stopNode))
-                                    {
-                                        _nodesWithoutPositionTag.Add(stopNode);
-                                    }
+                                    if (!_nodesWithoutPositionTag.Contains(stopNode)) { _nodesWithoutPositionTag.Add(stopNode); }
                                 }
                             }
 
                             if (_nodesWithoutPositionTag.Contains(stopNode))
                             {
                                 if (currentOutput.node.position.x >= stopNode.position.x) { stopNode.position.x = currentOutput.node.position.x + Spacing.x; }
-                                if (currentOutput.node.position.y > stopNode.position.y) { stopNode.position.y  = currentOutput.node.position.y + Spacing.y; }
+
+                                if (currentOutput.node.position.y > stopNode.position.y) { stopNode.position.y = currentOutput.node.position.y + Spacing.y; }
                             }
 
                             StopCurrentExecutionPath();
@@ -487,7 +485,7 @@ namespace WinuXGames.Sock.Editor.Builders
             public string  Label      { get; }
             public Vector2 NodeCursor { get; set; }
 
-            public NodePort NodePort   { get; }
+            public NodePort NodePort { get; }
 
             public OpenPathInfo(NodePort nodePort, Vector2 nodeCursor, int depth = 0, string label = "")
             {

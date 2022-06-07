@@ -3,7 +3,7 @@ using WinuXGames.Sock.Editor.Builders;
 using WinuXGames.Sock.Editor.NodeGraphs;
 using XNodeEditor;
 
-namespace WinuXGames.Sock.Editor.Core
+namespace WinuXGames.Sock.Editor
 {
     public static class OpenYarnAssetCallback
     {

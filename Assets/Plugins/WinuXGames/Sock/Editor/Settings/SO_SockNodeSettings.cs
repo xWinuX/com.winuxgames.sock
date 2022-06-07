@@ -12,13 +12,13 @@ namespace WinuXGames.Sock.Editor.Settings
         [SerializeField] private SockNodeSettings _lineMergerNodeSettings = new SockNodeSettings(new Color(0.61f, 0.54f, 0.15f), 100);
         [SerializeField] private SockNodeSettings _stopNodeSettings       = new SockNodeSettings(new Color(0.6f, 0.27f, 0.21f), 80);
 
-        public SockNodeSettings LineNodeSettings       => _lineNodeSettings;
-        public SockNodeSettings OptionNodeSettings     => _optionNodeSettings;
-        public SockNodeSettings StartNodeSettings      => _startNodeSettings;
-        public SockNodeSettings LineMergerNodeSettings => _lineMergerNodeSettings;
-        public SockNodeSettings StopNodeSettings       => _stopNodeSettings;
+        internal SockNodeSettings LineNodeSettings       => _lineNodeSettings;
+        internal SockNodeSettings OptionNodeSettings     => _optionNodeSettings;
+        internal SockNodeSettings StartNodeSettings      => _startNodeSettings;
+        internal SockNodeSettings LineMergerNodeSettings => _lineMergerNodeSettings;
+        internal SockNodeSettings StopNodeSettings       => _stopNodeSettings;
 
-        public void GetAllNodeSettings(Dictionary<string, SockNodeSettings> dictionary)
+        internal void GetAllNodeSettings(Dictionary<string, SockNodeSettings> dictionary)
         {
             dictionary.Add(ObjectNames.NicifyVariableName(nameof(LineNodeSettings)), LineNodeSettings);
             dictionary.Add(ObjectNames.NicifyVariableName(nameof(OptionNodeSettings)), OptionNodeSettings);
@@ -27,8 +27,10 @@ namespace WinuXGames.Sock.Editor.Settings
             dictionary.Add(ObjectNames.NicifyVariableName(nameof(StopNodeSettings)), StopNodeSettings);
         }
 
-        public void ReplaceValuesWith(SO_SockNodeSettings sockNodeSettings)
+        internal void ResetValues()
         {
+            SO_SockNodeSettings sockNodeSettings = CreateInstance<SO_SockNodeSettings>();
+         
             Dictionary<string, SockNodeSettings> oldSettings = new Dictionary<string, SockNodeSettings>();
             GetAllNodeSettings(oldSettings);
 

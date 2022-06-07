@@ -36,7 +36,27 @@ namespace WinuXGames.Sock.Editor.Settings
 
         internal string LineBreakReplacementString { get => _lineBreakReplacementString; set => _lineBreakReplacementString = value; }
 
-        private void CheckForNodeSettings()
+        internal NodeEditorPreferences.Settings GetReferencedXNodeSettings()
+        {
+            _xNodeSettings.typeColors[typeof(NodeInfo).FullName] = _connectionColor;
+            _xNodeSettings.noodlePath                            = _connectionStyle;
+            return _xNodeSettings;
+        }
+
+        internal void ResetGraphSettings()
+        {
+            SO_SockSettings sockSettings = CreateInstance<SO_SockSettings>();
+            _connectionColor = sockSettings.ConnectionColor;
+            _connectionStyle = sockSettings.ConnectionStyle;
+        }
+
+        internal void ResetExportSettings()
+        {
+            SO_SockSettings sockSettings = CreateInstance<SO_SockSettings>();
+            _lineBreakReplacementString = sockSettings.LineBreakReplacementString;
+        }
+
+        internal void CheckForNodeSettings()
         {
             if (_nodeSettings != null) { return; }
 
@@ -55,6 +75,7 @@ namespace WinuXGames.Sock.Editor.Settings
 
             // Check if at least on node setting exists
             string[] foundAssets = AssetDatabase.FindAssets("t:" + nameof(SO_SockNodeSettings), new[] { nodeSettingsPath });
+
             if (foundAssets.Length == 0)
             {
                 SO_SockNodeSettings nodeSettings = CreateInstance<SO_SockNodeSettings>();
@@ -65,20 +86,5 @@ namespace WinuXGames.Sock.Editor.Settings
                 _nodeSettings = nodeSettings;
             }
         }
-
-        internal NodeEditorPreferences.Settings GetReferencedXNodeSettings()
-        {
-            _xNodeSettings.typeColors[typeof(NodeInfo).FullName] = _connectionColor;
-            _xNodeSettings.noodlePath                            = _connectionStyle;
-            return _xNodeSettings;
-        }
-
-        internal void ResetGraphSettings(SO_SockSettings sockSettings)
-        {
-            _connectionColor = sockSettings.ConnectionColor;
-            _connectionStyle = sockSettings.ConnectionStyle;
-        }
-
-        internal void ResetExportSettings(SO_SockSettings sockSettings) { _lineBreakReplacementString = sockSettings.LineBreakReplacementString; }
     }
 }

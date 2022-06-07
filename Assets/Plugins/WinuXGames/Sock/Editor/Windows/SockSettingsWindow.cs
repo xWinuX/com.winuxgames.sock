@@ -7,7 +7,7 @@ using XNodeEditor;
 
 namespace WinuXGames.Sock.Editor.Windows
 {
-    public class SockSettingsWindow : EditorWindow
+    internal class SockSettingsWindow : EditorWindow
     {
         private readonly GUIContent                           _titleContent = new GUIContent("Sock Settings");
         private          Dictionary<string, SockNodeSettings> _allNodeSettingsDictionary;
@@ -22,6 +22,12 @@ namespace WinuXGames.Sock.Editor.Windows
             titleContent = _titleContent;
 
             _sockSettings = SockSettings.GetSettings();
+
+            if (_sockSettings == null)
+            {
+                GUILayout.Label("Loading...");
+                return;
+            }
 
             if (_allNodeSettingsDictionary == null) { GetNodeSettings(); }
 
@@ -54,7 +60,11 @@ namespace WinuXGames.Sock.Editor.Windows
         private void GetNodeSettings()
         {
             _allNodeSettingsDictionary = new Dictionary<string, SockNodeSettings>();
-            _sockSettings.NodeSettings.GetAllNodeSettings(_allNodeSettingsDictionary);
+
+            if (_sockSettings.NodeSettings != null)
+            {
+                _sockSettings.NodeSettings.GetAllNodeSettings(_allNodeSettingsDictionary);
+            }
         }
 
         private GUIStyle GetHeaderStyle() => _headerStyle ??= new GUIStyle
@@ -78,7 +88,7 @@ namespace WinuXGames.Sock.Editor.Windows
                 () => { EditorUtility.SetDirty(_sockSettings); },
                 () =>
                 {
-                    SockSettings.ResetExportSettings();
+                    _sockSettings.ResetExportSettings();
                     GetNodeSettings();
                 });
         }
@@ -103,7 +113,7 @@ namespace WinuXGames.Sock.Editor.Windows
                 },
                 () =>
                 {
-                    SockSettings.ResetGraphSettings();
+                    _sockSettings.ResetGraphSettings();
                     GetNodeSettings();
                 });
         }
@@ -136,7 +146,7 @@ namespace WinuXGames.Sock.Editor.Windows
                 },
                 () =>
                 {
-                    SockSettings.ResetNodeSettings();
+                    _sockSettings.NodeSettings.ResetValues();
                     GetNodeSettings();
                 });
             EditorGUIUtility.labelWidth = previousWidth;

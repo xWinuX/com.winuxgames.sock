@@ -9,7 +9,7 @@ using Yarn.Markup;
 
 namespace WinuXGames.Sock.Editor.Windows
 {
-    public class DialoguePreviewWindow : EditorWindow
+    internal class DialoguePreviewWindow : EditorWindow
     {
         private Dialogue                        _currentDialogue;
         private IDictionary<string, StringInfo> _currentStringTable;
