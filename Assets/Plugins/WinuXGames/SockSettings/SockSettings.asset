@@ -15,4 +15,4 @@ MonoBehaviour:
   _connectionColor: {r: 0.46, g: 0.85, b: 0.61, a: 1}
   _connectionStyle: 0
   _lineBreakReplacementString: /n
-  _nodeSettings: {fileID: 0}
+  _nodeSettings: {fileID: 11400000, guid: f7f604b4c20547044bef3a47bb8f2318, type: 2}

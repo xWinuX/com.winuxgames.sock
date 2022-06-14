@@ -54,7 +54,7 @@ namespace WinuXGames.Sock.Editor.Builders
                 //DebugLabels(node);
 
                 _nodeCursor.x = 0;
-                _nodeCursor.y = _nodeCursorMax.y;
+                _nodeCursor.y = _nodeCursorMax.y+1;
 
                 // Convert node metadata to string info for easier tag usage
                 StringInfo nodeStringInfo = new StringInfo { metadata = node.Tags.ToArray() };

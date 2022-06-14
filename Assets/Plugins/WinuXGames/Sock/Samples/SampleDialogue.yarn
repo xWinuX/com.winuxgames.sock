@@ -1,47 +1,47 @@
-title: Start
+﻿title: Start
 tags: 
 ---
-Character: This is a Test, everything[wait=0.5/] should[wait=0.5/] be[wait=0.5/] working[wait=0.5/] now
-Character: And Questions!
--> Other Option
-    Short path
--> Jump Options
+Character: This is a Test, everything[wait=0.5/] should[wait=0.5/] be[wait=0.5/] working[wait=0.5/] now #line:0f93792 
+Character: And Questions! #line:0e0f6b8 
+-> Other Option #line:0ab50f5 
+    Short path #line:0e93c7d 
+-> Jump Options #line:0e04d5f 
     <<jump AnswerNode>>
--> Just Stop
-    I will stop now
+-> Just Stop #line:0733fd9 
+    I will stop now #line:022435b 
     <<stop>>
--> Option 1
-    This is the reply after Option 1
-    Next reply after Option 1
-    nested option
-    -> Stop Nested Option
-        Stop reply
-        Next will stop
+-> Option 1 #line:009e125 
+    This is the reply after Option 1 #line:07b7b64 
+    Next reply after Option 1 #line:02165d8 
+    nested option #line:0e24132 
+    -> Stop Nested Option #line:0e0776b 
+        Stop reply #line:00b6ecf 
+        Next will stop #line:0f44691 
         <<stop>>
-    -> Nested Option 1
-        Nested reply 1 
-    -> Nested Option 2
-        Nested reply 2
-    Text after nested options
-OtherCharacter: And this text will always appear after the options are done!
+    -> Nested Option 1 #line:06665ee 
+        Nested reply 1  #line:05daa55 
+    -> Nested Option 2 #line:0f6ea24 
+        Nested reply 2 #line:045d7bc 
+    Text after nested options #line:0280680 
+OtherCharacter: And this text will always appear after the options are done! #line:0beb0c2 
 ===
 
 title: AnswerNode
 tags: 
 ---
-This is the answer Node
--> Option 1
-    This is the reply after Option 1
-    Next Reply 1
--> Option 2
-    This is the reply after Option 2
-    Next Reply 2
--> Option 3
-    This is the reply after Option 3
-    Next Reply 3
-    Last
--> Option 4
-    This is the reply after Option 4
-    Next Reply 4
+This is the answer Node #line:0914f74 
+-> Option 1 #line:0d20c23 
+    This is the reply after Option 1 #line:0592d1a 
+    Next Reply 1 #line:06a61aa 
+-> Option 2 #line:0857590 
+    This is the reply after Option 2 #line:0fa830a 
+    Next Reply 2 #line:0c972b6 
+-> Option 3 #line:065774c 
+    This is the reply after Option 3 #line:0be73fd 
+    Next Reply 3 #line:0bc7ec4 
+    Last #line:050a827 
+-> Option 4 #line:0d85746 
+    This is the reply after Option 4 #line:0d93968 
+    Next Reply 4 #line:07f0d92 
 ===
 
