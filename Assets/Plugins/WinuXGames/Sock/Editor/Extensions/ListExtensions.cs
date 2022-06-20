@@ -2,6 +2,9 @@
 
 namespace WinuXGames.Sock.Editor.Extensions
 {
+    /// <summary>
+    /// Extension Methods for Lists
+    /// </summary>
     public static class ListExtensions
     {
         /// <summary>

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using WinuXGames.Sock.Editor.CustomEditors.Nodes.Core;
 using WinuXGames.Sock.Editor.Nodes;
 using WinuXGames.Sock.Editor.Settings;
@@ -11,15 +12,20 @@ namespace WinuXGames.Sock.Editor.CustomEditors.Nodes
     {
         protected override SockNodeSettings Settings { get; } = SockSettings.GetSettings().NodeSettings.LineNodeSettings;
 
-        public override void OnHeaderGUI()
-        {
-            if (TargetNode == null) { return; }
-
-            GUILayout.Label(TargetNode.Name, NodeEditorResources.styles.nodeHeader, GUILayout.Height(30));
-        }
-
         protected override void DrawNode()
         {
+            // Check if line node text is not empty/null
+            if (string.IsNullOrEmpty(TargetNode.Text))
+            {
+                HasError  = true;
+                ErrorText = "A Line Node needs to have at least 1 character of text";
+            }
+            else
+            {
+                HasError  = false;
+                ErrorText = string.Empty;
+            }
+
             GUILayout.BeginHorizontal();
             DrawInputNodePort();
             NodeEditorGUILayout.PropertyField(serializedObject.FindProperty("_character"));

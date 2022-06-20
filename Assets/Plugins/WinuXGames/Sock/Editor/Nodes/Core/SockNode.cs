@@ -12,12 +12,12 @@ namespace WinuXGames.Sock.Editor.Nodes.Core
 {
     internal abstract class SockNode : Node
     {
-        public const string InputFieldName = "_in";
-
-        public virtual string Name              => "Default";
-        public virtual Type[] AllowedInputTypes => Type.EmptyTypes;
-
-        public NodeInfo LastValidNodeInfo { get; protected set; }
+        public const   string   InputFieldName = "_in";
+        public virtual string   Name              => "Default";
+        public virtual Type[]   AllowedInputTypes => Type.EmptyTypes;
+        public         bool     HasError          { get; set; }
+        public         string   ErrorText         { get; set; }
+        public         NodeInfo LastValidNodeInfo { get; protected set; }
 
         public override object GetValue(NodePort port)
         {
@@ -117,7 +117,7 @@ namespace WinuXGames.Sock.Editor.Nodes.Core
                             Pop();
                             break;
                         }
-                        
+
                         NodePort nodePort = connectedTo.node.Outputs.First();
                         if (nodePort == null || nodePort.ConnectionCount == 0)
                         {

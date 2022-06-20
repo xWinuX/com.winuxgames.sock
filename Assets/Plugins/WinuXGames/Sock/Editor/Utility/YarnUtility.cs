@@ -7,6 +7,9 @@ using Yarn.Markup;
 
 namespace WinuXGames.Sock.Editor.Utility
 {
+    /// <summary>
+    /// Holds Utility for processing Yarn Code
+    /// </summary>
     public static class YarnUtility
     {
         private static readonly Dialogue Dialogue = new Dialogue(new MemoryVariableStore());
@@ -37,6 +40,13 @@ namespace WinuXGames.Sock.Editor.Utility
         /// <returns>Result of parsing</returns>
         public static MarkupParseResult ParseMarkup(string text) => Dialogue.ParseMarkup(text);
         
+        /// <summary>
+        /// Tries to get number value from given property dictionary
+        /// </summary>
+        /// <param name="property">Property Dictionary</param>
+        /// <param name="key">Key to parse</param>
+        /// <param name="defaultValue">Value to return if value getting failed</param>
+        /// <returns>Either the found value or the default value if nothing was found</returns>
         public static float GetPropertyNumberValue(IReadOnlyDictionary<string, MarkupValue> property, string key, float defaultValue = 0f)
         {
             if (!property.TryGetValue(key, out MarkupValue markupValue)) { return defaultValue; }
@@ -47,9 +57,21 @@ namespace WinuXGames.Sock.Editor.Utility
             return defaultValue;
         }
 
+        /// <summary>
+        /// Tries to get string value from given property dictionary
+        /// </summary>
+        /// <param name="property">Property Dictionary</param>
+        /// <param name="key">Key to parse</param>
+        /// <param name="defaultValue">Value to return if value getting failed</param>
+        /// <returns>Either the found value or the default value if nothing was found</returns>
         public static string GetPropertyStringValue(IReadOnlyDictionary<string, MarkupValue> property, string key, string defaultValue = "") =>
             !property.TryGetValue(key, out MarkupValue markupValue) ? defaultValue : markupValue.StringValue;
 
+        /// <summary>
+        /// Compiles yarn file at given path
+        /// </summary>
+        /// <param name="path">Path to yarn file</param>
+        /// <returns>Compilation results</returns>
         public static CompilationResult CompileYarnFile(string path)
         {
             CompilationJob compilationJob = CompilationJob.CreateFromFiles(path);
@@ -57,6 +79,11 @@ namespace WinuXGames.Sock.Editor.Utility
             return CompileYarn(compilationJob);
         }
 
+        /// <summary>
+        /// Compiles given yarn code
+        /// </summary>
+        /// <param name="yarnString">Yarn code to parse</param>
+        /// <returns>Compilation results</returns>
         public static CompilationResult CompileYarnString(string yarnString)
         {
             CompilationJob compilationJob = CompilationJob.CreateFromString("preview", yarnString);
@@ -64,13 +91,20 @@ namespace WinuXGames.Sock.Editor.Utility
             return CompileYarn(compilationJob);
         }
 
+        /// <summary>
+        /// Gets program counter from given label
+        /// </summary>
+        /// <param name="labels">All labels of node</param>
+        /// <param name="label">Label to search</param>
+        /// <returns>Program counter of given label</returns>
+        /// <exception cref="IndexOutOfRangeException">Is caused by the given label not existing</exception>
         public static int GetProgramCounterFromLabel(IReadOnlyDictionary<string, int> labels, string label)
         {
             if (labels.TryGetValue(label, out int programCounter)) { return programCounter; }
 
             throw new IndexOutOfRangeException($"Label {label} Does not exist!");
         }
-
+        
         private static CompilationResult CompileYarn(CompilationJob compilationJob)
         {
             CompilationResult result;

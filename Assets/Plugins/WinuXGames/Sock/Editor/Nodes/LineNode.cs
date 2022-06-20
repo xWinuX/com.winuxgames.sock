@@ -19,10 +19,10 @@ namespace WinuXGames.Sock.Editor.Nodes
         private NodeInfo _out;
 
         [SerializeField]
-        private string _character;
+        private string _character = "";
 
         [SerializeField] [TextArea(5, 5)]
-        private string _text;
+        private string _text = "";
 
         public string Character { get => _character; set => _character = value; }
 
@@ -49,7 +49,7 @@ namespace WinuXGames.Sock.Editor.Nodes
         {
             base.GetText(sb, index, includeSockTags);
 
-            if (!string.IsNullOrWhiteSpace(_character))
+            if (!string.IsNullOrEmpty(_character))
             {
                 sb.Append(Character);
                 sb.Append(": ");

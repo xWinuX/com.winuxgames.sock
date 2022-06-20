@@ -61,10 +61,7 @@ namespace WinuXGames.Sock.Editor.Windows
         {
             _allNodeSettingsDictionary = new Dictionary<string, SockNodeSettings>();
 
-            if (_sockSettings.NodeSettings != null)
-            {
-                _sockSettings.NodeSettings.GetAllNodeSettings(_allNodeSettingsDictionary);
-            }
+            if (_sockSettings.NodeSettings != null) { _sockSettings.NodeSettings.GetAllNodeSettings(_allNodeSettingsDictionary); }
         }
 
         private GUIStyle GetHeaderStyle() => _headerStyle ??= new GUIStyle

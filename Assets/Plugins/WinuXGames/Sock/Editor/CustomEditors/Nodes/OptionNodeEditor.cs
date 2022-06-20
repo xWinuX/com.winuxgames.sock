@@ -17,41 +17,35 @@ namespace WinuXGames.Sock.Editor.CustomEditors.Nodes
     {
         protected override SockNodeSettings Settings { get; } = SockSettings.GetSettings().NodeSettings.OptionNodeSettings;
 
-        private readonly GUIStyle _headerStyle = new GUIStyle(NodeEditorResources.styles.nodeHeader);
-        private          bool     _hasOutputError;
-        private          string   _hoverText;
-        private          int      _selectIndex = -1;
-
-
-        public override void OnHeaderGUI()
-        {
-            _headerStyle.normal.textColor = _hasOutputError ? Color.red : NodeEditorResources.styles.nodeHeader.normal.textColor;
-
-            GUILayout.Label(
-                new GUIContent(target.name, _hasOutputError ? "Each output of a option node needs to be connected to a node" : ""),
-                _headerStyle,
-                GUILayout.Height(30)
-            );
-        }
-
-        public override Color GetTint()
-        {
-            Color baseColor = base.GetTint();
-
-            if (TargetNode == null) { return Color.magenta; }
-
-            if (TargetNode.DynamicOutputs.Any(targetNodeDynamicOutput => targetNodeDynamicOutput.ConnectionCount == 0))
-            {
-                _hasOutputError = true;
-                return baseColor * 0.5f;
-            }
-
-            _hasOutputError = false;
-            return baseColor;
-        }
+        private int _selectIndex = -1;
 
         protected override void DrawNode()
         {
+            // Check if each output has Text
+            if (TargetNode.OptionStringList.Any(string.IsNullOrEmpty))
+            {
+                HasError  = true;
+                ErrorText = "Each output of a option node needs to have at least 1 character of text";
+            }
+            else
+            {
+                HasError  = false;
+                ErrorText = string.Empty;
+            }
+            
+            // Check if each output is connected
+            if (TargetNode.DynamicOutputs.Any(targetNodeDynamicOutput => targetNodeDynamicOutput.ConnectionCount == 0))
+            {
+                HasError  = true;
+                ErrorText = "Each output of a option node needs to be connected to a node";
+            }
+            else
+            {
+                HasError  = false;
+                ErrorText = string.Empty;
+            }
+            
+            // Draw node
             EditorGUILayout.BeginHorizontal();
             DrawInputNodePort();
             NodeEditorGUILayout.DynamicPortList(

@@ -9,8 +9,17 @@ using XNode;
 
 namespace WinuXGames.Sock.Editor.Builders
 {
-    internal static class DialogueGraphToYarnBuilder
+    /// <summary>
+    /// Converts dialogue graph to yarn code
+    /// </summary>
+    public static class DialogueGraphToYarnBuilder
     {
+        /// <summary>
+        /// Returns yarn string generated from dialogueGraph
+        /// </summary>
+        /// <param name="dialogueGraph">DialogueGraph to parse</param>
+        /// <param name="includeSockTags">Should sock tags be included?</param>
+        /// <returns>Yarn code</returns>
         public static string Build(DialogueGraph dialogueGraph, bool includeSockTags = true)
         {
             StringBuilder sb = new StringBuilder();

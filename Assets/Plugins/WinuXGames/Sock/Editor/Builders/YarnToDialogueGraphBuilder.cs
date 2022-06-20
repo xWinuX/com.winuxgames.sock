@@ -15,7 +15,10 @@ using Node = XNode.Node;
 
 namespace WinuXGames.Sock.Editor.Builders
 {
-    internal class YarnToDialogueGraphBuilder
+    /// <summary>
+    /// Converts Yarn code into a dialogue Graph
+    /// </summary>
+    public class YarnToDialogueGraphBuilder
     {
         /// <summary>
         /// Horizontal and vertical spacing between nodes automatically created nodes
