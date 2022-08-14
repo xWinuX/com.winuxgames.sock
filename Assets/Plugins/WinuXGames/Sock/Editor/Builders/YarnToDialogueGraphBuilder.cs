@@ -154,7 +154,7 @@ namespace WinuXGames.Sock.Editor.Builders
                                         lineMergerNode.position = GetNodePositionFromStringInfo(lineNodeStringInfo, out _, SockConstants.SockLineMergerNodePositionTag);
                                     }
 
-                                    // Connect the node that was previously connected to the line node to the  merger
+                                    // Connect the node that was previously connected to the line node to the merger
                                     previousConnection.Connect(lineMergerNode.GetInputPort(SockNode.InputFieldName));
 
                                     // Connect merger to already existing line node (previous connection will automatically be disconnected)
