@@ -6,4 +6,4 @@ After writing dialogue you can preview it directly in the editor. \
 \
 The tool currently only supports simple dialogue, choices and no yarn variables.
 \
-The unitypackage and the documentation are both in the Release .zip.\
+The unitypackage and the documentation are both in the Release zip.
